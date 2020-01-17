@@ -10,7 +10,7 @@ import pysnooper
 etree = html.etree
 
 total_page = 50
-proxy = ''
+proxy = {}
 
 
 class WbSpider:
@@ -61,8 +61,6 @@ class WbSpider:
 
     def get_web_data(self):
         web_html = self.web_requests(3)
-        if web_html is None:
-            web_html = self.web_requests(1)
 
         if self.page == 1:
             global total_page
@@ -94,7 +92,7 @@ class WbSpider:
                 up_num = 0 if table_item[i].xpath("string(.//div[@class='card-act']/ul/li[4])") == ' ' \
                     else table_item[i].xpath("string(.//div[@class='card-act']/ul/li[4])").replace(' ', '')  # 点赞数
                 wb_url = 'https:' + table_item[i].xpath(".//div[@class='content']/p[@class='from']/a[1]/@href")[0]
-                web_data = [content, date_time, comment_num, forward_num, up_num, wb_url, user_name, user_id]
+                web_data = [content, date_time, comment_num, forward_num, up_num, wb_url, user_name, user_url, user_id]
                 web_data_list.append(web_data)
             except IndexError:
                 break
@@ -104,14 +102,16 @@ class WbSpider:
     def app_requests(self, user_id, retry_count):
         app_param = {
             'jumpfrom': 'weibocom',
-            'sudaref': 's.weibo.com',
+            'sudaref': 'www.weibo.com',
             'type': 'uid',
-            'value': user_id
+            'value': user_id,
         }
-        while retry_count < 0:
+        if retry_count < 0:
+            print('获取用户数据失败，默认赋值为['', '', '', '', '']')
             return ['', '', '', '', '']
         try:
             app_json = requests.get(url=app_url, headers=app_header, params=app_param, proxies=proxy, timeout=6).json()
+            print(app_json)
             assert app_json['data']['userInfo']
             gender = '女' if app_json['data']['userInfo']['gender'] == 'f' else '男'  # 性别
             follow_count = app_json['data']['userInfo']['follow_count']  # 关注
@@ -126,10 +126,10 @@ class WbSpider:
 
     def start(self):
         all_data_list = []
-        web = self.get_web_data()
-        for i in web:
-            web_data = i[0:7]
-            user_id = i[-1]
+        need = self.get_web_data()
+        for n in need:
+            web_data = n[0:9]
+            user_id = n[-1]
             app_data = self.app_requests(user_id=user_id, retry_count=3)
             print(web_data)
             print(app_data)
@@ -141,5 +141,5 @@ class WbSpider:
 
 if __name__ == '__main__':
     for i in range(1, total_page):
-        wb = WbSpider(keyword='张恒', date='20200116', page=i)
+        wb = WbSpider(keyword='香港问题', date='20190715', page=i)
         wb.start()

@@ -1,12 +1,13 @@
+import re
 import pandas as pd
+import requests
 
-
-data = pd.date_range(start='20200118', end='20200216')
+data = pd.date_range(start='20200201', end='20200229')
 date_list = data.array
 date_lists = []
 for i in date_list:
-    date_lists.append(str(i)[0:10]+'-')
-# print(date_lists)
+    date_lists.append(str(i)[0:10])
+print(date_lists)
 
 # a = 'dfdfdsfdsfsfdsfsdf'
 #
@@ -25,9 +26,15 @@ date_list = ['2020-01-18-', '2020-01-19-', '2020-01-20-', '2020-01-21-', '2020-0
              '2020-02-13-', '2020-02-14-', '2020-02-15-', '2020-02-16-']
 
 
-a = {'1': 2, '2': 2}
-a.update({'3': 3})
-print(len(date_list))
+# a = {'1': 2, '2': 2}
+# a.update({'3': 3})
+# print(len(date_list))
 
-
-
+# text = '//@发生的发生的发萨达:对她说的分散//@asdfasddfas：'
+#
+# p = re.compile(r'//@(.*?)[:：]', re.S)
+# forwarded_user_names = p.findall(text)  # 被转发人昵称列表
+# forwarded_user_name = forwarded_user_names[0]  # 被转发人昵称
+#
+# print(forwarded_user_names)
+# print(type(forwarded_user_name))

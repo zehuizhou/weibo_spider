@@ -1,6 +1,6 @@
 import csv
-
 import requests
+
 
 param = {"entityName": "IsMuseumInfo",
          "pageNation": {"currentPageNumber": 1, "pageSize": 6000},
@@ -17,7 +17,7 @@ url = 'http://202.41.241.221:8769/datamanage/data/find/table'
 
 def spider():
     need_list = []
-    ret = requests.post(url=url, json=param, headers=header).json()
+    ret = requests.post(url=url, json=param, headers=header, proxies=proxy, timeout=6).json()
     print(ret)
     data = ret['data']['data']
     print(len(data))

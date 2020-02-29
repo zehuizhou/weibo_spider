@@ -39,7 +39,7 @@ def save_data(filename, data):
             c.writerow(line)
 
 
-@retry(stop_max_attempt_number=3, wait_random_min=1000, wait_random_max=5000)
+# @retry(stop_max_attempt_number=3, wait_random_min=1000, wait_random_max=5000)
 def change_proxy(retry_count):
     if retry_count < 0:
         return
@@ -91,8 +91,7 @@ class WbSpider:
             assert table_item
             return root_web
         except:
-            print('代理ip失效，等待3秒。。。。。。')
-            time.sleep(3)
+            change_proxy(3)
             return self.web_requests(retry_count - 1)
 
     def get_web_data(self):
@@ -132,7 +131,7 @@ class WbSpider:
                 up_num = 0 if table_item[n].xpath("string(.//div[@class='card-act']/ul/li[4])") == ' ' \
                     else table_item[n].xpath("string(.//div[@class='card-act']/ul/li[4])").replace(' ', '')  # 点赞数
                 wb_url = 'https:' + table_item[n].xpath(".//div[@class='content']/p[@class='from']/a[1]/@href")[0]  # 微博地址
-                wb_id = re.findall('.*weibo.com/(.*)/', wb_url)[0]
+                wb_id = re.findall('.*/(.*)\?refer_flag', wb_url)[0]
 
                 # 新增的
                 face_num = len(table_item[n].xpath(".//div[@class='content']/p//img[@class='face']"))  # 表情数
@@ -181,8 +180,8 @@ class WbSpider:
         }
 
         if retry_count < 0:
-            assert 0
-
+            print('获取用户数据失败，默认赋值为['', '', '', '', '']')
+            return ['', '', '', '', '', '', '']
         try:
             with open('pro.txt', 'r') as f:
                 proxy = eval(f.read())
@@ -190,17 +189,16 @@ class WbSpider:
             app_json = requests.get(url=app_url, headers=app_header, params=app_param, proxies=proxy, timeout=6).json()
             if 'msg' in app_json:
                 if app_json['msg'] == '这里还没有内容':
-                    print('这里还没有内容，使用带cookie的header')
+                    print('❤️这里还没有内容，使用带cookie的header')
                     app_json = requests.get(url=app_url, headers=app_header_cookie, params=app_param, proxies=proxy,
                                             timeout=6).json()
                     if 'msg' in app_json:
-                        print(app_json['msg'] + '默认赋值为['', '', '', '', '']')
+                        print('❤' + app_json['msg'] + '默认赋值为['', '', '', '', '']')
                         return ['', '', '', '', '', '', '']
 
             assert app_json['data']['userInfo']
         except:
-            print('代理ip失效，等待3秒。。。。。。')
-            time.sleep(3)
+            change_proxy(3)
             return self.app_requests(user_id, retry_count - 1)
         # 微博账号名称，具体认证信息，粉丝数，微博内容，定位，转发数，评论数，点赞数，发布时间，该微博的链接，图片及视频的个数及链接，话题数，@的个数，表情数。
         try:
@@ -242,7 +240,7 @@ class WbSpider:
         for n in need:
             web_data = n
             user_id = n[-1]
-            app_data = self.app_requests(user_id=user_id, retry_count=6)
+            app_data = self.app_requests(user_id=user_id, retry_count=2)
             print(web_data)
             print(app_data)
             print('-----------------------------------------')
@@ -252,32 +250,36 @@ class WbSpider:
 
 
 if __name__ == '__main__':
-    # change_proxy(2)
+    change_proxy(1)
 
-    date_list = ['2020-02-15-']
+    date_list = ['2020-02-01', '2020-02-02', '2020-02-03', '2020-02-04', '2020-02-05', '2020-02-06', '2020-02-07',
+                 '2020-02-08', '2020-02-09', '2020-02-10', '2020-02-11', '2020-02-12', '2020-02-13', '2020-02-14',
+                 '2020-02-15', '2020-02-16', '2020-02-17', '2020-02-18', '2020-02-19', '2020-02-20', '2020-02-21',
+                 '2020-02-22', '2020-02-23', '2020-02-24', '2020-02-25', '2020-02-26', '2020-02-27', '2020-02-28',
+                 '2020-02-29']
+
 
     # custom:2020-01-30-22:2020-01-30-23
-    key = '新型冠状病毒'
+    key = '韩红基金会被举报'
 
-    csv_name = '新型冠状病毒2-13至2-16'
+    csv_name = '韩红基金会被举报'
 
     for date in date_list:
-        for num in range(2, 24):
-            # 保存第一页数据，并修改总页数
-            wb = WbSpider(keyword=key, start_time=date + str(num), end_time=date + str(num + 1), page=1)
+        # 保存第一页数据，并修改总页数
+        wb = WbSpider(keyword=key, start_time=date, end_time=date, page=1)
 
+        data = wb.start()
+        save_data(csv_name, data)
+
+        print('################################################')
+        print(f"{date}第1页数据存储成功")
+        print('################################################')
+
+        # 保存剩下页数数据
+        for i in range(2, total_page+1):
+            wb = WbSpider(keyword=key, start_time=date, end_time=date, page=i)
             data = wb.start()
             save_data(csv_name, data)
-
             print('################################################')
-            print(f"{date + str(num)}~{date + str(num + 1)}第1数据存储成功。。。。。。")
+            print(f"{date}第{i}页数据存储成功")
             print('################################################')
-
-            # 保存剩下页数数据
-            for i in range(2, total_page+1):
-                wb = WbSpider(keyword=key, start_time=date+str(num), end_time=date+str(num+1), page=i)
-                data = wb.start()
-                save_data(csv_name, data)
-                print('################################################')
-                print(f"{date+str(num)}至{date+str(num+1)}第{i}页数据存储成功。。。。。。")
-                print('################################################')

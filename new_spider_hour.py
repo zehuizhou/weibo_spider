@@ -5,9 +5,9 @@ from lxml import html
 import os
 import datetime
 import string
-from retrying import retry
+# from retrying import retry
 from constants import *
-import pysnooper
+# import pysnooper
 import sys
 import csv
 
@@ -260,7 +260,7 @@ if __name__ == '__main__':
     csv_name = '韩红基金会被举报'
 
     for date in date_list:
-        for num in range(23, 24):
+        for num in range(0, 24):
             # 保存第一页数据，并修改总页数
             wb = WbSpider(keyword=key, start_time=date + str(num), end_time=date + str(num + 1), page=1)
 

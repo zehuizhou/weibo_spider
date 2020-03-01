@@ -2,11 +2,11 @@ import re
 import pandas as pd
 import requests
 
-data = pd.date_range(start='20200201', end='20200229')
+data = pd.date_range(start='20200123', end='20200229')
 date_list = data.array
 date_lists = []
 for i in date_list:
-    date_lists.append(str(i)[0:10])
+    date_lists.append(str(i)[0:10]+'-')
 print(date_lists)
 
 # a = 'dfdfdsfdsfsfdsfsdf'
@@ -38,3 +38,48 @@ date_list = ['2020-01-18-', '2020-01-19-', '2020-01-20-', '2020-01-21-', '2020-0
 #
 # print(forwarded_user_names)
 # print(type(forwarded_user_name))
+
+"""
+    for date in date_list:
+        for num in range(0, 24):
+            # 保存第一页数据，并修改总页数
+            wb = WbSpider(keyword=key, start_time=date + str(num), end_time=date + str(num + 1), page=1)
+
+            data = wb.start()
+            save_data(csv_name, data)
+
+            print('################################################')
+            print(f"{date + str(num)}~{date + str(num + 1)}第1数据存储成功。。。。。。")
+            print('################################################')
+
+            # 保存剩下页数数据
+            for i in range(2, total_page+1):
+                wb = WbSpider(keyword=key, start_time=date+str(num), end_time=date+str(num+1), page=i)
+                data = wb.start()
+                save_data(csv_name, data)
+                print('################################################')
+                print(f"{date+str(num)}至{date+str(num+1)}第{i}页数据存储成功。。。。。。")
+                print('################################################')
+"""
+
+"""
+    for date in date_list:
+        # 保存第一页数据，并修改总页数
+        wb = WbSpider(keyword=key, start_time=date, end_time=date, page=1)
+
+        data = wb.start()
+        save_data(csv_name, data)
+
+        print('################################################')
+        print(f"{date}第1页数据存储成功")
+        print('################################################')
+
+        # 保存剩下页数数据
+        for i in range(2, total_page + 1):
+            wb = WbSpider(keyword=key, start_time=date, end_time=date, page=i)
+            data = wb.start()
+            save_data(csv_name, data)
+            print('################################################')
+            print(f"{date}第{i}页数据存储成功")
+            print('################################################')
+"""

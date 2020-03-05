@@ -109,7 +109,8 @@ class WbSpider:
         web_data_list = []
         for n in range(0, len(table_item)):
             try:
-                # 微博数据：微博内容，定位，转发数，评论数，点赞数，发布时间，该微博的链接，图片及视频的个数及链接，话题数，@的个数，表情数
+                # 微博数据：微博id，微博内容，定位，转发数，评论数，点赞数，发布时间，该微博的链接，图片及视频的个数及链接，话题数，@的个数，表情数
+                wb_id = str(table_item[n].xpath("./@mid")[0])
                 user_name = table_item[n].xpath(".//div[@class='info']/div[2]/a/text()")[0]  # 用户名
                 user_url = 'https:' + table_item[n].xpath(".//div[@class='info']/div[2]/a/@href")[0]  # 用户个人主页地址
                 user_id = re.findall('.*weibo.com/(.*)refer_flag', user_url)[0].replace('?', '')

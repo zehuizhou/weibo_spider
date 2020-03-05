@@ -6,6 +6,10 @@ import os
 import sys
 import requests
 from lxml import html
+from constants import proxy_url
+from fake_useragent import UserAgent
+
+ua = UserAgent(verify_ssl=False)
 
 """
 爬不同的微博换个id就行，40行，cookie貌似不用换
@@ -14,11 +18,10 @@ proxy = {}
 
 etree = html.etree
 
-# 用的是熊猫代理 http://www.xiongmaodaili.com/ ，按量提取，每次提取1个ip，json格式，买3块钱的就差不多了
-proxy_url = 'http://route.xiongmaodaili.com/xiongmao-web/api/glip?secret=3f3a3212bb8129e0d70d325c41bed8c7&orderNo=GL20200223101445SA8mbNNF&count=1&isTxt=0&proxyType=1'
+total_page = 1
 
 # 过期了就换一下
-cookie = 'ALF=1585289771; _T_WM=24942942014; WEIBOCN_FROM=1110005030; SCF=AqURd7rrLbKR6K42oMeW_I-_GcEWkVQLrLN_HSe9iIZf1bXoi1rXXtq6YEUsDSteo8t1CEuPk4SG2Eis-g-RrOg.; SUB=_2A25zUn9XDeRhGeVI7lER9CvFyD6IHXVQvQEfrDV6PUJbktANLVPfkW1NTAX_rD7YTm16TrDhv9dNGLwzafOdPIgl; SUBP=0033WrSXqPxfM725Ws9jqgMF55529P9D9WWES-MGSxVJk.S7AzfIp_iT5JpX5K-hUgL.FoecSKe7Sh-4e0z2dJLoIEXLxKBLBonL1h5LxKqL1-BLB-qLxKqLBo5L1KBLxKnLBoBLBKnLxKqLBo5LBoBt; SUHB=00xZQkwwDqf5l8; SSOLoginState=1582698247; MLOGIN=1; _ga=GA1.2.852180565.1582702609; _gid=GA1.2.1190095481.1582702609; M_WEIBOCN_PARAMS=oid%3D4469177786494007%26luicode%3D20000061%26lfid%3D4469177786494007%26uicode%3D20000061%26fid%3D4469177786494007; XSRF-TOKEN=b7fa37'
+cookie = '_T_WM=24942942014; _ga=GA1.2.852180565.1582702609; ALF=1585704328; WEIBOCN_FROM=1110005030; SCF=AqURd7rrLbKR6K42oMeW_I-_GcEWkVQLrLN_HSe9iIZffgVwD82S9myNPVJt_eEnoefx53PouFijK-aVb_1g-D8.; SUB=_2A25zWBDwDeRhGeVI7lER9CvFyD6IHXVQorC4rDV6PUJbktANLWb8kW1NTAX_rCCldEMhGPVde7CQFgHTGj32A3uI; SUBP=0033WrSXqPxfM725Ws9jqgMF55529P9D9WWES-MGSxVJk.S7AzfIp_iT5JpX5K-hUgL.FoecSKe7Sh-4e0z2dJLoIEXLxKBLBonL1h5LxKqL1-BLB-qLxKqLBo5L1KBLxKnLBoBLBKnLxKqLBo5LBoBt; SUHB=0TPlxq9jgirh_U; SSOLoginState=1583112352; MLOGIN=1; M_WEIBOCN_PARAMS=oid%3D4467076221310347%26luicode%3D20000061%26lfid%3D4467076221310347%26uicode%3D20000061%26fid%3D4467076221310347; XSRF-TOKEN=f9955a'
 
 header = {
     'x-requested-with': 'XMLHttpRequest',
@@ -27,20 +30,19 @@ header = {
     'x-xsrf-token': 'b7fa37',
     'sec-fetch-mode': 'cors',
     'sec-fetch-site': 'same-origin',
-    'cookie': cookie,
+    'cookie1': cookie,
     'Accept': 'application/json, text/plain, */*',
     'Referer': 'http://gl.sach.gov.cn/?from=singlemessage&isappinstalled=0',
-    'User-Agent': 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.130 Mobile Safari/537.36'
+    'User-Agent':  ua.random,
 }
 
 url = 'https://m.weibo.cn/api/statuses/repostTimeline'
 
 
-def spider(page):
+def spider(page, wb_id):
     param = {
         # 这个id要抓包获取，代表那条微博
-        'id': '4469177786494007',
-        # 'id': '4469112517984891',
+        'id': str(wb_id),
         'page': page
     }
     need_list = []
@@ -54,29 +56,65 @@ def spider(page):
             time.sleep(1)
             change_proxy(3)
             return get_ret(count - 1)
-
     ret = get_ret(3)
+    print(wb_id)
+    print(ret)
     ok = ret['ok']
+    print(type(ok))
+
+    global total_page
+    if ok == 0 and total_page == 1:
+        total_page += 1
+        print(f"总页数改为{total_page}")
+
     if ok == 1:
+        total_page = ret['data']['max']
+        print(f"###########################总页数{total_page}###########################")
+
         data = ret['data']['data']
         for d in data:
             html = d['text']
             root = etree.HTML(html)
             text = root.xpath("string(/)")
-            print(text)
-            if '//<a' in html:
-                forward_user_name = d['user']['screen_name']  # 转发人昵称
-                p = re.compile(r'//@(.*?)[:：]', re.S)
-                forwarded_user_names = p.findall(text)  # 被转发人昵称列表
-                forwarded_user_name = forwarded_user_names[0]  # 被转发人昵称
-            else:
-                forward_user_name = d['user']['screen_name']  # 转发人昵称
-                forwarded_user_name = d['retweeted_status']['user']['screen_name']  # 被转发人昵称
-                forwarded_user_names = [forwarded_user_name]
+            # if '//<a' in html:
+            #     forward_user_name = d['user']['screen_name']  # 转发人昵称
+            #     p = re.compile(r'//@(.*?)[:：]', re.S)
+            #     forwarded_user_names = p.findall(text)  # 被转发人昵称列表
+            #     forwarded_user_name = forwarded_user_names[0] if forwarded_user_names else ''  # 被转发人昵称
+            # else:
+            #     forward_user_name = d['user']['screen_name']  # 转发人昵称
+            #     forwarded_user_name = d['retweeted_status']['user']['screen_name']  # 被转发人昵称
+            #     forwarded_user_names = [forwarded_user_name]
+
+            created_at = d['created_at']  # 创建时间
+
+            # 用户信息
+            user_id = d['user']['id']  # 用户id
+            user_name = d['user']['screen_name']  # 用户id
+
+            gender = '女' if d['user']['gender'] == 'f' else '男'  # 性别
+
+            follow_count = d['user']['follow_count']  # 关注
+
+            followers_count = d['user']['followers_count']  # 粉丝
 
             verified = d['user']['verified']  # 是否认证
-            created_at = d['created_at']  # 创建时间
-            need = [forward_user_name, forwarded_user_name, text, verified, created_at, forwarded_user_names]
+
+            try:
+                verified_type = d['user']['verified_type']  # 认证类型
+            except:
+                verified_type = ''
+            try:
+                verified_type_ext = d['user']['verified_type_ext']  # 认证类型的什么东东
+            except:
+                verified_type_ext = ''
+            try:
+                verified_reason = d['user']['verified_reason']  # 认证原因
+            except:
+                verified_reason = ''
+
+            need = [wb_id, text, created_at,
+                    user_id, user_name, gender, follow_count, followers_count, verified, verified_type, verified_type_ext, verified_reason]
             print(need)
             need_list.append(need)
         return need_list
@@ -96,7 +134,8 @@ def save_data(filename, data):
     with open(path, "a", newline="", encoding="utf_8_sig") as f:
         c = csv.writer(f)
         if not is_exist:
-            c.writerow(['转发人', '被转发人', '转发内容', '是否认证', '创建时间', '转发人列表'])
+            c.writerow(['wb_id', '转发内容', '转发时间',
+                    'user_id', 'user_name', '性别', '关注', '粉丝', '是否认证', '认证类别', 'verified_type_ext', 'verified_reason'])
         for line in data:
             c.writerow(line)
 
@@ -124,8 +163,21 @@ def change_proxy(retry_count):
 
 if __name__ == '__main__':
     change_proxy(1)
-    for i in range(0, 35082):
-        data = spider(i)
+
+    csv_name = '《双黄连对新型冠状病毒不具针对性》的转发'
+
+    with open('1.txt', 'r') as f:
+        content = f.read().splitlines()
+        wei_id_list = content
+
+    for wei_id in wei_id_list:
+        data = spider(page=1, wb_id=wei_id)
         if data is not None:
-            save_data('武汉中心医院1', data)
-            print(f'第{i}页保存成功~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+            save_data(csv_name, data)
+            print(f'{wei_id}第1页保存成功~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+
+        for i in range(2, total_page+1):
+            data = spider(page=i, wb_id=wei_id)
+            if data is not None:
+                save_data(csv_name, data)
+                print(f'总页数{total_page}，{wei_id}第{i}页保存成功~~~~~~~~~~~~~~~~~~~~~~~~~~~')

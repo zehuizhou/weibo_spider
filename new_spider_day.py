@@ -134,7 +134,7 @@ class WbSpider:
                 up_num = 0 if table_item[n].xpath("string(.//div[@class='card-act']/ul/li[4])") == ' ' \
                     else table_item[n].xpath("string(.//div[@class='card-act']/ul/li[4])").replace(' ', '')  # 点赞数
                 wb_url = 'https:' + table_item[n].xpath(".//div[@class='content']/p[@class='from']/a[1]/@href")[0]  # 微博地址
-                wb_id = re.findall('.*/(.*)\?refer_flag', wb_url)[0]
+                # wb_id = re.findall('.*/(.*)\?refer_flag', wb_url)[0]
 
                 # 新增的
                 face_num = len(table_item[n].xpath(".//div[@class='content']/p//img[@class='face']"))  # 表情数

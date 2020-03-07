@@ -60,7 +60,6 @@ def spider(page, wb_id):
     print(wb_id)
     print(ret)
     ok = ret['ok']
-    print(type(ok))
 
     global total_page
     if ok == 0 and total_page == 1:

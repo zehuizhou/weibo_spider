@@ -25,6 +25,7 @@ app_url = 'https://m.weibo.cn/api/container/getIndex'
 
 token = 'fd14bd'
 
+
 app_header_cookie = {
     'x-xsrf-token': token,
     'User-Agent': ua.random,
@@ -32,7 +33,7 @@ app_header_cookie = {
     'MWeibo-Pwa': '1',
     'Upgrade-Insecure-Requests': '1',
     'X-Requested-With': 'XMLHttpRequest',
-    'cookie': '_T_WM=98340183483; ALF=1585625589; WEIBOCN_FROM=1110005030; SCF=AiDcH5yG7P90hiw60kfQQhisYZmUC4yLSh_ZLjpiEJjexXY1wof6ueOMb0b2xSRad9KwrON-TmllgiLMXoLx_IQ.; SUB=_2A25zX0K6DeRhGeVI7lER9CvFyD6IHXVQoG7yrDV6PUJbktAfLVnTkW1NTAX_rGSOsj9tdcMISx-DIrjGWjymldXf; SUBP=0033WrSXqPxfM725Ws9jqgMF55529P9D9WWES-MGSxVJk.S7AzfIp_iT5JpX5K-hUgL.FoecSKe7Sh-4e0z2dJLoIEXLxKBLBonL1h5LxKqL1-BLB-qLxKqLBo5L1KBLxKnLBoBLBKnLxKqLBo5LBoBt; SUHB=0N2F7SEhJ3JPDd; SSOLoginState=1583035114; MLOGIN=1; XSRF-TOKEN=077a97; M_WEIBOCN_PARAMS=luicode%3D10000011%26lfid%3D1076035586763840%26fid%3D1076035586763840%26uicode%3D10000011'
+    'cookie': '_ga=GA1.2.852180565.1582702609; WEIBOCN_FROM=1110005030; _T_WM=73519821653; MLOGIN=1; ALF=1586162479; XSRF-TOKEN=799afa; SCF=AqURd7rrLbKR6K42oMeW_I-_GcEWkVQLrLN_HSe9iIZfG4hUcE3jGaWhGDzqrhLLWDSFzsi3eSSUqJYT8xFFGNE.; SUB=_2A25zZy5vDeRhGeVI7lER9CvFyD6IHXVQq7InrDV6PUJbktAKLWXYkW1NTAX_rBY_NKuZEMx9mqKZOzN5V0wOZoQL; SUBP=0033WrSXqPxfM725Ws9jqgMF55529P9D9WWES-MGSxVJk.S7AzfIp_iT5JpX5K-hUgL.FoecSKe7Sh-4e0z2dJLoIEXLxKBLBonL1h5LxKqL1-BLB-qLxKqLBo5L1KBLxKnLBoBLBKnLxKqLBo5LBoBt; SUHB=06Z1FKoV8Tj2PB; SSOLoginState=1583570495; M_WEIBOCN_PARAMS=luicode%3D10000011%26lfid%3D2302836029748720%26fid%3D1005056029748720%26uicode%3D10000011'
 }
 
 app_header = {
@@ -44,9 +45,7 @@ app_header = {
     'X-Requested-With': 'XMLHttpRequest'
 }
 
-dates = ['2019-10-01']
 
-keywords = ['香港问题', '香港事件', '香港议员']
 
 app_param = {
     'type': 'uid',
@@ -57,6 +56,6 @@ app_param = {
 
 """https://weibo.com/u/6487028379?refer_flag=1001030103_"""
 
-# res = requests.get(url=app_url, headers=app_header_cookie, params=app_param).json()
-#
-# print(res)
+res = requests.get(url=app_url, headers=app_header_cookie, params=app_param).json()
+
+print(res)

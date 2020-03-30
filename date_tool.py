@@ -2,11 +2,11 @@ import re
 import pandas as pd
 import requests
 
-data = pd.date_range(start='20200123', end='20200229')
+data = pd.date_range(start='20200302', end='20200310')
 date_list = data.array
 date_lists = []
 for i in date_list:
-    date_lists.append(str(i)[0:10]+'-')
+    date_lists.append(str(i)[0:10])
 print(date_lists)
 
 # a = 'dfdfdsfdsfsfdsfsdf'

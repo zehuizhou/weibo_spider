@@ -18,10 +18,10 @@ proxy = {}
 
 etree = html.etree
 
-csv_name = '《双黄连对新型冠状病毒不具针对性》的评论'
+csv_name = '评论2'
 
 # 过期了就换一下
-cookie = '_T_WM=24942942014; _ga=GA1.2.852180565.1582702609; ALF=1585879133; XSRF-TOKEN=577897; WEIBOCN_FROM=1110005030; SCF=AqURd7rrLbKR6K42oMeW_I-_GcEWkVQLrLN_HSe9iIZfSRW5WZmBcnDbkzx4CWBQdABo5niRQ0aVKEV-2InExYQ.; SUB=_2A25zW3xcDeRhGeVI7lER9CvFyD6IHXVQpAQUrDV6PUJbktANLRbSkW1NTAX_rDzEeYmyNavvirkKwL-GCpmmaVuM; SUBP=0033WrSXqPxfM725Ws9jqgMF55529P9D9WWES-MGSxVJk.S7AzfIp_iT5JpX5K-hUgL.FoecSKe7Sh-4e0z2dJLoIEXLxKBLBonL1h5LxKqL1-BLB-qLxKqLBo5L1KBLxKnLBoBLBKnLxKqLBo5LBoBt; SUHB=02MfWbwgzONWCT; SSOLoginState=1583287308; MLOGIN=1; M_WEIBOCN_PARAMS=uicode%3D20000061%26fid%3D4466929533834665%26oid%3D4466929533834665'
+cookie = '_ga=GA1.2.852180565.1582702609; _T_WM=73519821653; ALF=1586567249; SCF=AqURd7rrLbKR6K42oMeW_I-_GcEWkVQLrLN_HSe9iIZfx9sFLhxylFwW9xIYaJQRN7GBUNu2KoH9zBLGoDwWNGI.; SUB=_2A25zbnFYDeRhGeVI7lER9CvFyD6IHXVQkR8QrDV6PUJbktANLXPTkW1NTAX_rI1ydt90vkSc50P2r0bhDS3tfIrI; SUBP=0033WrSXqPxfM725Ws9jqgMF55529P9D9WWES-MGSxVJk.S7AzfIp_iT5JpX5K-hUgL.FoecSKe7Sh-4e0z2dJLoIEXLxKBLBonL1h5LxKqL1-BLB-qLxKqLBo5L1KBLxKnLBoBLBKnLxKqLBo5LBoBt; SUHB=0A05ytqQN9_yCf; WEIBOCN_FROM=1110005030; MLOGIN=1; M_WEIBOCN_PARAMS=uicode%3D20000061%26fid%3D4467107636950632%26oid%3D4467107636950632; XSRF-TOKEN=12370a'
 
 header = {
     'x-requested-with': 'XMLHttpRequest',
@@ -39,7 +39,11 @@ header = {
 
 
 def spider(wb_id):
-    need_list = []
+    """
+    传入微博id
+    :param wb_id:
+    :return:
+    """
     max_id = ''
 
     while True:
@@ -52,7 +56,7 @@ def spider(wb_id):
             # noinspection PyBroadException
             try:
                 ret = requests.get(url=url, headers=header, proxies=proxy, timeout=6).json()
-                time.sleep(random.uniform(1, 2.5))
+                time.sleep(random.uniform(6, 8.5))
                 print(ret)
                 return ret
             except Exception:
@@ -125,9 +129,8 @@ def spider(wb_id):
                         user_id, user_name, gender, follow_count, followers_count, verified, verified_type, verified_type_ext, verified_reason]
                 print(need)
 
-                csv_name = '《双黄连可抑制新型冠状病毒》的评论'
                 save_data(filename=csv_name, data=[need])
-                print(str(max_id)+'保存成功')
+                print(f'max_id {max_id} 保存成功')
 
 
 def get_path(file_name):
@@ -178,9 +181,10 @@ if __name__ == '__main__':
     """
     # change_proxy(1)
 
-    with open('1.txt', 'r') as f:
-        content = f.read().splitlines()
-        wei_id_list = content
+    # with open('1.txt', 'r') as f:
+    #     content = f.read().splitlines()
+    #     wei_id_list = content
+    wei_id_list = ['4467107636950632']
     for wei_id in wei_id_list:
         spider(wei_id)
         print(f'微博{wei_id}保存成功~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')

@@ -5,13 +5,13 @@ from fake_useragent import UserAgent
 ua = UserAgent(verify_ssl=False)
 
 # 代理ip地址
-proxy_url = 'http://route.xiongmaodaili.com/xiongmao-web/api/glip?secret=fb037669709eba969179b22f2064a0a1&orderNo=GL20200225155830IrGknHSG&count=1&isTxt=0&proxyType=1'
+proxy_url = 'http://route.xiongmaodaili.com/xiongmao-web/api/glip?secret=8d7cc3c74eeb76ad422c67df45944d31&orderNo=GL20200131152126nmVxqyej&count=1&isTxt=0&proxyType=1'
 
 # web
 web_url = 'https://s.weibo.com/weibo'
 
 # cookie过期了就修改下
-web_cookie = 'SINAGLOBAL=1090758372960.1766.1562847473607; ALF=1614569588; SSOLoginState=1583033589; SCF=AiDcH5yG7P90hiw60kfQQhisYZmUC4yLSh_ZLjpiEJjeP4uBdQkrrF58WXsy6Q5xz0CwR7sADInr-L3Nx2vgeJA.; SUB=_2A25zX1ymDeRhGeVI7lER9CvFyD6IHXVQLclurDV8PUNbmtAfLRPMkW9NTAX_rDz1LtTlTM1I73IAizjqgby5aVks; SUBP=0033WrSXqPxfM725Ws9jqgMF55529P9D9WWES-MGSxVJk.S7AzfIp_iT5JpX5KzhUgL.FoecSKe7Sh-4e0z2dJLoIEXLxKBLBonL1h5LxKqL1-BLB-qLxKqLBo5L1KBLxKnLBoBLBKnLxKqLBo5LBoBt; SUHB=02MfWbwgzONWCT; wvr=6; _s_tentry=login.sina.com.cn; UOR=www.7po.com,widget.weibo.com,login.sina.com.cn; Apache=5037387369390.458.1583033594809; ULV=1583033594820:16:1:1:5037387369390.458.1583033594809:1582978849836; webim_unReadCount=%7B%22time%22%3A1583035089161%2C%22dm_pub_total%22%3A0%2C%22chat_group_client%22%3A0%2C%22allcountNum%22%3A0%2C%22msgbox%22%3A0%7D'
+web_cookie = 'SINAGLOBAL=9039371595693.941.1576205125652; _ga=GA1.2.1684815725.1577155440; wvr=6; login_sid_t=0921cff3290f71ddaddeb9791cc1ec5e; cross_origin_proto=SSL; _s_tentry=passport.weibo.com; UOR=,,www.baidu.com; Apache=241358778566.89136.1583888615148; ULV=1583888615153:20:6:1:241358778566.89136.1583888615148:1583472822048; SSOLoginState=1583888646; webim_unReadCount=%7B%22time%22%3A1583918693198%2C%22dm_pub_total%22%3A0%2C%22chat_group_client%22%3A0%2C%22allcountNum%22%3A0%2C%22msgbox%22%3A0%7D; SUBP=0033WrSXqPxfM725Ws9jqgMF55529P9D9WWES-MGSxVJk.S7AzfIp_iT5JpX5KMhUgL.FoecSKe7Sh-4e0z2dJLoIEXLxKBLBonL1h5LxKqL1-BLB-qLxKqLBo5L1KBLxKnLBoBLBKnLxKqLBo5LBoBt; ALF=1615511248; SCF=AqURd7rrLbKR6K42oMeW_I-_GcEWkVQLrLN_HSe9iIZft3bTp0j7uZrFLHOfGK3gtPFApHsYSly1W8tEimLbPDo.; SUB=_2A25zbfsdDeRhGeVI7lER9CvFyD6IHXVQG2vVrDV8PUNbmtAfLUblkW9NTAX_rAWOKO3Cn4bnLoXfNdlOpGRo-RrD; SUHB=0h15T_i9y2ZlWV'
 
 web_header = {
     'Host': 's.weibo.com',
@@ -56,6 +56,6 @@ app_param = {
 
 """https://weibo.com/u/6487028379?refer_flag=1001030103_"""
 
-res = requests.get(url=app_url, headers=app_header_cookie, params=app_param).json()
-
-print(res)
+# res = requests.get(url=app_url, headers=app_header_cookie, params=app_param).json()
+#
+# print(res)

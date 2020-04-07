@@ -123,6 +123,11 @@ class WbSpider:
 
                 date_time = table_item[n].xpath("string(.//div[@class='content']/p[@class='from']/a[1])")  # 发微博的时间
                 date_time = ''.join([i for i in date_time if i not in string.whitespace])  # 发微博的时间
+                if len(date_time) == 11:
+                    date_time = str(datetime.datetime.now())[0:4] + '-' + date_time[0:2] + '-' + date_time[3:5] + ' ' + date_time[-5:]
+                else:
+                    date_time = date_time[0:4] + '-' + date_time[5:7] + '-' + date_time[8:10] + ' ' + date_time[-5:]
+
                 comment_num = 0 \
                     if table_item[n].xpath("string (.//div[@class='card-act']/ul/li[3])").replace('评论', '') == ' ' \
                     else table_item[n].xpath("string(.//div[@class='card-act']/ul/li[3])").replace('评论 ', '')  # 评论数
@@ -132,10 +137,10 @@ class WbSpider:
                 up_num = 0 if table_item[n].xpath("string(.//div[@class='card-act']/ul/li[4])") == ' ' \
                     else table_item[n].xpath("string(.//div[@class='card-act']/ul/li[4])").replace(' ', '')  # 点赞数
                 wb_url = 'https:' + table_item[n].xpath(".//div[@class='content']/p[@class='from']/a[1]/@href")[0]  # 微博地址
-                # wb_id = re.findall('.*/(.*)\?refer_flag', wb_url)[0]
 
                 # 新增的
                 face_num = len(table_item[n].xpath(".//div[@class='content']/p//img[@class='face']"))  # 表情数
+                face = '\n'.join(table_item[n].xpath(".//div[@class='content']/p//img[@class='face']/@title"))
                 img_num = len(
                     table_item[n].xpath(".//div[@class='content']//img[@action-type='fl_pics']/@src"))  # 图片数，包括转发内容
                 if img_num > 0:
@@ -172,7 +177,7 @@ class WbSpider:
 
                 web_data = [wb_id, content, forword_content, date_time, comment_num, forward_num, up_num, wb_url,
                             user_name, user_url,
-                            face_num, img_num, img_urls, video_url, aite_num, topic_num, topics, place, user_id]
+                            face_num, face, img_num, img_urls, video_url, aite_num, topic_num, topics, place, user_id]
 
                 web_data_list.append(web_data)
             except IndexError:
@@ -321,31 +326,29 @@ class WbSpider:
 
 if __name__ == '__main__':
     change_proxy(1)
+    # 日期要多加1天
+    date_list = ['2020-01-09', '2020-01-10', '2020-01-11', '2020-01-12', '2020-01-13', '2020-01-14', '2020-01-15', '2020-01-16', '2020-01-17', '2020-01-18', '2020-01-19', '2020-01-20', '2020-01-21', '2020-01-22', '2020-01-23', '2020-01-24', '2020-01-25', '2020-01-26', '2020-01-27', '2020-01-28', '2020-01-29', '2020-01-30', '2020-01-31', '2020-02-01', '2020-02-02', '2020-02-03', '2020-02-04', '2020-02-05', '2020-02-06', '2020-02-07', '2020-02-08', '2020-02-09', '2020-02-10', '2020-02-11', '2020-02-12', '2020-02-13', '2020-02-14', '2020-02-15', '2020-02-16', '2020-02-17', '2020-02-18', '2020-02-19', '2020-02-20', '2020-02-21', '2020-02-22', '2020-02-23', '2020-02-24', '2020-02-25', '2020-02-26', '2020-02-27', '2020-02-28', '2020-02-29', '2020-03-01', '2020-03-02', '2020-03-03', '2020-03-04', '2020-03-05', '2020-03-06', '2020-03-07', '2020-03-08', '2020-03-09', '2020-03-10', '2020-03-11', '2020-03-12', '2020-03-13', '2020-03-14', '2020-03-15', '2020-03-16', '2020-03-17', '2020-03-18', '2020-03-19', '2020-03-20', '2020-03-21', '2020-03-22', '2020-03-23', '2020-03-24', '2020-03-25', '2020-03-26', '2020-03-27', '2020-03-28', '2020-03-29', '2020-03-30', '2020-03-31', '2020-04-01', '2020-04-02', '2020-04-03']
 
-    date_list = ['2020-01-27-', '2020-01-28-', '2020-01-29-', '2020-01-30-', '2020-01-31-', '2020-02-01-', '2020-02-02-', '2020-02-03-']
+    # custom:2020-01-09-0:2020-01-10-0
+    key_list = ['新型冠状病毒']
 
-    # custom:2020-01-30-22:2020-01-30-23
-    key = '#封城日记#'
+    csv_name = '新型冠状病毒'
 
-    csv_name = '封城日记'
-
-    for date in date_list:
-        for num in range(0, 24):
-            # 保存第一页数据，并修改总页数
-            wb = WbSpider(keyword=key, start_time=date + str(num), end_time=date + str(num + 1), page=1)
-
+    for key in key_list:
+        for d in range(0, len(date_list)-1):
+            # 保存第一页数据，并修改总页数（只能通过第一次请求获取总页数）
+            wb = WbSpider(keyword=key, start_time=date_list[d] + '-0', end_time=date_list[d+1] + '-0', page=1)
             data = wb.start()
             save_data(csv_name, data)
-
             print('################################################')
-            print(f"{date + str(num)}~{date + str(num + 1)}第1数据存储成功。。。。。。")
+            print(f"{date_list[d] + '-0'}至{date_list[d+1] + '-0'}第{1}页数据存储成功。。。。。。")
             print('################################################')
 
             # 保存剩下页数数据
-            for i in range(2, total_page+1):
-                wb = WbSpider(keyword=key, start_time=date+str(num), end_time=date+str(num+1), page=i)
+            for i in range(2, total_page + 1):
+                wb = WbSpider(keyword=key, start_time=date_list[d] + '-0', end_time=date_list[d+1] + '-0', page=i)
                 data = wb.start()
                 save_data(csv_name, data)
                 print('################################################')
-                print(f"{date+str(num)}至{date+str(num+1)}第{i}页数据存储成功。。。。。。")
+                print(f"{date_list[d] + '-0'}至{date_list[d+1] + '-0'}第{i}页数据存储成功。。。。。。")
                 print('################################################')

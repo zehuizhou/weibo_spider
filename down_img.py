@@ -3,7 +3,6 @@ import requests
 import csv
 
 
-
 def download(id, img_url):
     try:
         pic = requests.get(img_url, timeout=10)
@@ -12,7 +11,7 @@ def download(id, img_url):
         fp = open(dir, 'wb')
         fp.write(pic.content)
         fp.close()
-        print(f"{id} 图片 {img_url} 下载成功~~")
+        print(f"{id} 图片 {img_url} 下载成功~~").center(70, '-')
     except requests.exceptions.ConnectionError:
         print('图片无法下载')
 

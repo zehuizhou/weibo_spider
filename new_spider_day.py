@@ -31,8 +31,8 @@ def save_data(filename, data):
         c = csv.writer(f)
         if not is_exist:
             c.writerow(['微博id', '微博内容', '转发内容', '时间', '评论数', '转发数', '点赞数', '微博链接', '用户名', '用户个人主页链接',
-                        '表情数', '所有图片数', '图片链接（包括转发）', '视频链接（包括转发）', '@数', '主题数', '主题', '地点', '用户id',
-                        '性别', '关注', '粉丝', '是否认证', '认证类型', '认证ext', '认证详情'])
+                        '表情数', '表情', '图片数', '图片链接（包括转发）', '视频链接（包括转发）', '@数', '主题数', '主题', '地点', '用户id',
+                        '性别', '关注', '粉丝', '是否认证', '认证类型', '认证ext', '认证详情', '所在地'])
         for line in data:
             c.writerow(line)
 
@@ -68,9 +68,9 @@ class WbSpider:
 
     def web_requests(self, retry_count):
         param = {
-            # 'scope': 'ori',  # 是否原创
+            'scope': 'ori',  # 是否原创
             'q': self.keyword,
-            'typeall': '1',
+            # 'typeall': '1',
             'suball': '1',
             'timescope': 'custom:' + self.start_time + ':' + self.end_time,
             'Refer': 'g',
@@ -222,10 +222,7 @@ class WbSpider:
         follow_count = app_json['data']['userInfo']['follow_count']  # 关注
         followers_count = app_json['data']['userInfo']['followers_count']  # 粉丝
 
-        try:
-            verified = app_json['data']['userInfo']['verified']  # 是否认证
-        except:
-            verified = ''
+        verified = app_json['data']['userInfo']['verified']  # 是否认证
         try:
             verified_type = app_json['data']['userInfo']['verified_type']  # 认证类型
         except:
@@ -314,12 +311,12 @@ class WbSpider:
             web_data = n
             user_id = n[-1]
             app_data_userinfo = self.app_requests_userinfo(user_id=user_id, retry_count=2)
-            # app_data_cardsinfo = self.app_requests_cards(user_id=user_id, retry_count=2)
+            app_data_cardsinfo = self.app_requests_cards(user_id=user_id, retry_count=2)
             print(web_data)
             print(app_data_userinfo)
-            # print(app_data_cardsinfo)
+            print(app_data_cardsinfo)
             print('-----------------------------------------')
-            all_data = web_data + app_data_userinfo
+            all_data = web_data + app_data_userinfo + app_data_cardsinfo
             all_data_list.append(all_data)
         return all_data_list
 
@@ -327,28 +324,28 @@ class WbSpider:
 if __name__ == '__main__':
     change_proxy(1)
     # 日期要多加1天
-    date_list = ['2020-01-09', '2020-01-10', '2020-01-11', '2020-01-12', '2020-01-13', '2020-01-14', '2020-01-15', '2020-01-16', '2020-01-17', '2020-01-18', '2020-01-19', '2020-01-20', '2020-01-21', '2020-01-22', '2020-01-23', '2020-01-24', '2020-01-25', '2020-01-26', '2020-01-27', '2020-01-28', '2020-01-29', '2020-01-30', '2020-01-31', '2020-02-01', '2020-02-02', '2020-02-03', '2020-02-04', '2020-02-05', '2020-02-06', '2020-02-07', '2020-02-08', '2020-02-09', '2020-02-10', '2020-02-11', '2020-02-12', '2020-02-13', '2020-02-14', '2020-02-15', '2020-02-16', '2020-02-17', '2020-02-18', '2020-02-19', '2020-02-20', '2020-02-21', '2020-02-22', '2020-02-23', '2020-02-24', '2020-02-25', '2020-02-26', '2020-02-27', '2020-02-28', '2020-02-29', '2020-03-01', '2020-03-02', '2020-03-03', '2020-03-04', '2020-03-05', '2020-03-06', '2020-03-07', '2020-03-08', '2020-03-09', '2020-03-10', '2020-03-11', '2020-03-12', '2020-03-13', '2020-03-14', '2020-03-15', '2020-03-16', '2020-03-17', '2020-03-18', '2020-03-19', '2020-03-20', '2020-03-21', '2020-03-22', '2020-03-23', '2020-03-24', '2020-03-25', '2020-03-26', '2020-03-27', '2020-03-28', '2020-03-29', '2020-03-30', '2020-03-31', '2020-04-01', '2020-04-02', '2020-04-03']
+    date_list = ['2020-03-01', '2020-03-02', '2020-03-03', '2020-03-04', '2020-03-05', '2020-03-06', '2020-03-07', '2020-03-08', '2020-03-09', '2020-03-10', '2020-03-11', '2020-03-12', '2020-03-13', '2020-03-14', '2020-03-15', '2020-03-16', '2020-03-17', '2020-03-18', '2020-03-19', '2020-03-20', '2020-03-21', '2020-03-22', '2020-03-23', '2020-03-24', '2020-03-25', '2020-03-26', '2020-03-27', '2020-03-28', '2020-03-29', '2020-03-30', '2020-03-31', '2020-04-01', '2020-04-02', '2020-04-03', '2020-04-04', '2020-04-05', '2020-04-06', '2020-04-07', '2020-04-08']
 
     # custom:2020-01-09-0:2020-01-10-0
-    key_list = ['新型冠状病毒']
+    key_list = ['#封城日记#']
 
-    csv_name = '新型冠状病毒'
+    csv_name = '#封城日记#'
 
     for key in key_list:
-        for d in range(0, len(date_list)-1):
+        for d in date_list:
             # 保存第一页数据，并修改总页数（只能通过第一次请求获取总页数）
-            wb = WbSpider(keyword=key, start_time=date_list[d] + '-0', end_time=date_list[d+1] + '-0', page=1)
+            wb = WbSpider(keyword=key, start_time=d + '-0', end_time=d + '-24', page=1)
             data = wb.start()
             save_data(csv_name, data)
             print('################################################')
-            print(f"{date_list[d] + '-0'}至{date_list[d+1] + '-0'}第{1}页数据存储成功。。。。。。")
+            print(f"{d}第{1}页数据存储成功。。。。。。")
             print('################################################')
 
             # 保存剩下页数数据
             for i in range(2, total_page + 1):
-                wb = WbSpider(keyword=key, start_time=date_list[d] + '-0', end_time=date_list[d+1] + '-0', page=i)
+                wb = WbSpider(keyword=key, start_time=d + '-0', end_time=d + '-24', page=i)
                 data = wb.start()
                 save_data(csv_name, data)
                 print('################################################')
-                print(f"{date_list[d] + '-0'}至{date_list[d+1] + '-0'}第{i}页数据存储成功。。。。。。")
+                print(f"{d}第{i}页数据存储成功。。。。。。")
                 print('################################################')

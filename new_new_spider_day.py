@@ -27,7 +27,7 @@ class WbSpider:
         param = {
             # 'scope': 'ori',  # 是否原创
             'q': self.keyword,
-            'typeall': '1',  # 全部 和 scope 二选一
+            'typeall': '1',  # 全部（和scope二选一）
             'suball': '1',
             'timescope': 'custom:' + self.start_time + ':' + self.end_time,
             'Refer': 'g',
@@ -62,7 +62,7 @@ class WbSpider:
                 web_item = {}
                 user_url = 'https:' + table_item[n].xpath(".//div[@class='info']/div[2]/a/@href")[0]
 
-                web_item['微博id'] = str(table_item[n].xpath("./@mid")[0])
+                web_item['微博id'] = '`' + str(table_item[n].xpath("./@mid")[0])
                 web_item['用户名'] = table_item[n].xpath(".//div[@class='info']/div[2]/a/text()")[0]
 
                 web_item['个人主页链接'] = user_url

@@ -161,8 +161,8 @@ class WbSpider:
         except:
             change_proxy(3)
             return self.get_user_info(user_id, retry_count - 1)
-
         ###############################################################
+        
         user_item = {}
         if app_json['data']['userInfo']['gender'] == 'f':
             gender = '女'

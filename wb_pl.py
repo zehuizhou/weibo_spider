@@ -1,27 +1,18 @@
 # -*- coding: utf-8 -*-
-import csv
 import random
 import time
-import os
-import sys
 import requests
 from lxml import html
-from constants import proxy_url
+from constants import save_to_csv, change_proxy, app_cookie
 from fake_useragent import UserAgent
 
 ua = UserAgent(verify_ssl=False)
 
-"""
-爬不同的微博换个id就行，40行，cookie貌似不用换
-"""
 proxy = {}
 
 etree = html.etree
 
-csv_name = '罗志祥本人'
-
-# 过期了就换一下
-cookie = '_ga=GA1.2.852180565.1582702609; _T_WM=70668980778; WEIBOCN_FROM=1110005030; WEIBOCN_WM=3333_2001; MLOGIN=1; XSRF-TOKEN=03e886; ALF=1590208665; SCF=AqURd7rrLbKR6K42oMeW_I-_GcEWkVQLrLN_HSe9iIZfenwj8u5xePxJTB5UESYkX8MrhYTz94xCjv0Hw6OAxk4.; SUB=_2A25zpWvmDeRhGeVI7lER9CvFyD6IHXVRZnWurDV6PUJbktANLVXCkW1NTAX_rGdbDt2ZLciF_VQNxARVliRp29yf; SUBP=0033WrSXqPxfM725Ws9jqgMF55529P9D9WWES-MGSxVJk.S7AzfIp_iT5JpX5K-hUgL.FoecSKe7Sh-4e0z2dJLoIEXLxKBLBonL1h5LxKqL1-BLB-qLxKqLBo5L1KBLxKnLBoBLBKnLxKqLBo5LBoBt; SUHB=0xnyyaqQJuUbJk; SSOLoginState=1587616694; M_WEIBOCN_PARAMS=from%3Dgroupmessage%26oid%3D4496846325638301%26luicode%3D20000061%26lfid%3D4496797961825543%26uicode%3D20000061%26fid%3D4496846325638301'
+cname = '丁丁-旅行 微博评论.csv'
 
 header = {
     'x-requested-with': 'XMLHttpRequest',
@@ -31,7 +22,7 @@ header = {
     'sec-fetch-dest': 'empty',
     'sec-fetch-mode': 'cors',
     'sec-fetch-site': 'same-origin',
-    'cookie': cookie,
+    'cookie': app_cookie,
     'accept': 'application/json, text/plain, */*',
     'Referer': 'https://m.weibo.cn/status/IscD7sd2K',
     'User-Agent':  ua.random,
@@ -39,11 +30,6 @@ header = {
 
 
 def spider(wb_id):
-    """
-    传入微博id
-    :param wb_id:
-    :return:
-    """
     max_id = ''
 
     while True:
@@ -53,15 +39,14 @@ def spider(wb_id):
             url = "https://m.weibo.cn/comments/hotflow?id={}&mid={}&max_id_type=0&max_id={}".format(str(wb_id), str(wb_id), str(max_id))
 
         def get_ret(count):
-            # noinspection PyBroadException
             try:
                 ret = requests.get(url=url, headers=header, proxies=proxy, timeout=6).json()
-                time.sleep(random.uniform(6, 8.5))
+                time.sleep(random.uniform(0.6, 3.5))
                 print(ret)
                 return ret
-            except Exception:
-                # change_proxy(3)
-                time.sleep(3)
+            except Exception as e:
+                print(e)
+                change_proxy(3)
                 return get_ret(count - 1)
 
         ret = get_ret(3)
@@ -82,13 +67,14 @@ def spider(wb_id):
 
             data = ret['data']['data']
             for d in data:
-                html = d['text']
-                root = etree.HTML(html)
-                text = root.xpath("string(/)")
+                item = {}
 
+                h = d['text']
+                root = etree.HTML(h)
+                item['微博id'] = '`' + wb_id
+                item['评论内容'] = root.xpath("string(/)")
                 created_at = d['created_at']  # 创建时间
                 time_list = created_at.split(' ')
-                week = time_list[0]
                 month_dict = {
                     'Jan': '01',
                     'Feb': '02',
@@ -103,75 +89,22 @@ def spider(wb_id):
                     'Nov': '11',
                     'Dec': '12',
                 }
-                created_at_new = time_list[5] + '-' + month_dict[time_list[1]] + '-' + time_list[2]+' '+time_list[3]
-
+                item['评论时间'] = time_list[5] + '-' + month_dict[time_list[1]] + '-' + time_list[2]+' '+time_list[3]
+                item['星期'] = time_list[0]
                 # 用户信息
-                user_id = d['user']['id']  # 用户id
-                user_name = d['user']['screen_name']  # 用户id
-                gender = '女' if d['user']['gender'] == 'f' else '男'  # 性别
-                follow_count = d['user']['follow_count']  # 关注
-                followers_count = d['user']['followers_count']  # 粉丝
-                verified = d['user']['verified']  # 是否认证
-                try:
-                    verified_type = d['user']['verified_type']  # 认证类型
-                except:
-                    verified_type = ''
-                try:
-                    verified_type_ext = d['user']['verified_type_ext']  # verified_type_ext
-                except:
-                    verified_type_ext = ''
-                try:
-                    verified_reason = d['user']['verified_reason']  # 认证原因
-                except:
-                    verified_reason = ''
-
-                need = [wb_id, text, created_at, created_at_new, week,
-                        user_id, user_name, gender, follow_count, followers_count, verified, verified_type, verified_type_ext, verified_reason]
-                print(need)
-
-                save_data(filename=csv_name, data=[need])
-                print(f'max_id {max_id} 保存成功')
-
-
-def get_path(file_name):
-    path = os.path.join(os.path.dirname(sys.argv[0]), file_name)
-    return path
-
-
-def save_data(filename, data):
-    path = get_path(filename + '.csv')
-    if os.path.isfile(path):
-        is_exist = True
-    else:
-        is_exist = False
-    with open(path, "a", newline="", encoding="utf_8_sig") as f:
-        c = csv.writer(f)
-        if not is_exist:
-            c.writerow(['wb_id', '评论内容', '转发时间', 'created_at_new', 'week',
-                    'user_id', 'user_name', '性别', '关注', '粉丝', '是否认证', '认证类别', 'verified_type_ext', 'verified_reason'])
-        for line in data:
-            c.writerow(line)
-
-
-def change_proxy(retry_count):
-    if retry_count < 0:
-        return
-
-    result = requests.get(proxy_url).json()
-    if result['msg'] == 'ok':
-        ip = result['obj'][0]['ip']
-        port = result['obj'][0]['port']
-        proxies = {"http": "http://" + ip + ":" + port, "https": "http://" + ip + ":" + port}
-
-        global proxy
-        proxy = proxies
-
-        print(f"代理ip为更改为：{proxies}")
-        return proxies
-    else:
-        time.sleep(1)
-        print('切换代理失败，重新尝试。。。')
-        change_proxy(retry_count - 1)
+                item['用户id'] = d['user']['id']
+                item['用户名'] = d['user']['screen_name']
+                item['性别'] = '女' if d['user']['gender'] == 'f' else '男'
+                item['关注'] = d['user']['follow_count']
+                item['粉丝'] = d['user']['followers_count']
+                item['是否认证'] = d['user']['verified']
+                item['认证类型'] = d['user']['verified_type'] if 'verified_type' in d['user'] else ''
+                item['认证原因'] = d['user']['verified_reason'] if 'verified_reason' in d['user'] else ''
+                item['verified_type_ext'] = d['user']['verified_type_ext'] if 'verified_type_ext' in d['user'] else ''
+                print(item)
+                csv_name = cname
+                save_to_csv(file_name=csv_name, list_dict=[item])
+            print(str(max_id)+' 保存成功')
 
 
 if __name__ == '__main__':
@@ -179,14 +112,12 @@ if __name__ == '__main__':
     4466929533834665
     4466986551438138
     """
-    # change_proxy(1)
+    change_proxy(1)
 
-    # with open('1.txt', 'r') as f:
-    #     content = f.read().splitlines()
-    #     wei_id_list = content
-    wei_id_list = ['4496846325638301']
+    with open('ids', 'r') as f:
+        content = f.read().splitlines()
+        wei_id_list = content
+
     for wei_id in wei_id_list:
-        spider(wei_id)
+        spider(wei_id[-16:])
         print(f'微博{wei_id}保存成功~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
-
-

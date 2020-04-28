@@ -99,7 +99,7 @@ def spider(wb_id):
                 item['粉丝'] = d['user']['followers_count']
                 item['是否认证'] = d['user']['verified']
                 item['认证类型'] = d['user']['verified_type'] if 'verified_type' in d['user'] else ''
-                item['认证原因'] = d['user']['verified_reason'] if 'verified_reason' in d['user'] else ''
+                item['认证详情'] = d['user']['verified_reason'] if 'verified_reason' in d['user'] else ''
                 item['verified_type_ext'] = d['user']['verified_type_ext'] if 'verified_type_ext' in d['user'] else ''
                 print(item)
                 csv_name = cname

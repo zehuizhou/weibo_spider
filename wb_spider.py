@@ -40,8 +40,8 @@ class WbSpider:
                 proxy = eval(f.read())
             res_web = requests.get(url=web_url, headers=web_header, params=param, proxies=proxy, timeout=6).content.decode()
             root_web = etree.HTML(res_web)
-            table_item = root_web.xpath("//div[@class='card-wrap']")
-            assert table_item
+            div_list = root_web.xpath("//div[@class='card-wrap']/div[@class='card']")
+            assert div_list
         except Exception as e:
             print(e)
             change_proxy(3)
@@ -55,53 +55,49 @@ class WbSpider:
                 total_page = 1
             print(f'总页数:{total_page}')
 
-        table_item = root_web.xpath("//div[@class='card-wrap']")
+        div_list = root_web.xpath("//div[@class='card-wrap']/div[@class='card']")
+        print(len(div_list))
         web_data_list = []
-        for n in range(0, len(table_item)):
+        for div in div_list:
             try:
                 web_item = {}
-                user_url = 'https:' + table_item[n].xpath(".//div[@class='info']/div[2]/a/@href")[0]
+                user_url = 'https:' + div.xpath(".//div[@class='info']/div[2]/a/@href")[0]
 
-                web_item['微博id'] = '`' + str(table_item[n].xpath("./@mid")[0])
-                web_item['用户名'] = table_item[n].xpath(".//div[@class='info']/div[2]/a/text()")[0]
+                web_item['微博id'] = '`' + str(div.xpath("./../@mid")[0])
+                web_item['用户名'] = div.xpath(".//div[@class='info']/div[2]/a/text()")[0]
 
                 web_item['个人主页链接'] = user_url
                 web_item['用户id'] = re.findall('.*weibo.com/(.*)refer_flag', user_url)[0].replace('?', '')
 
-                content = table_item[n].xpath("string(.//div[@class='content']/p[@node-type='feed_list_content'])") \
-                    if table_item[n].xpath("string(.//div[@class='content']/p[@node-type='feed_list_content_full'])") == '' \
-                    else table_item[n].xpath("string(.//div[@class='content']/p[@node-type='feed_list_content_full'])")
+                content = div.xpath("string(.//div[@class='content']/p[@node-type='feed_list_content'])") \
+                    if div.xpath("string(.//div[@class='content']/p[@node-type='feed_list_content_full'])") == '' \
+                    else div.xpath("string(.//div[@class='content']/p[@node-type='feed_list_content_full'])")
                 web_item['内容'] = ''.join([c for c in content if c not in string.whitespace])  # 微博内容
 
-                forward_content = table_item[n].xpath("string(.//div[@class='content']/div[@class='card-comment'])")
+                forward_content = div.xpath("string(.//div[@class='content']/div[@class='card-comment'])")
                 web_item['转发内容'] = ''.join([c for c in forward_content if c not in string.whitespace])  # 转发内容
 
-                date_time = table_item[n].xpath("string(.//div[@class='content']/p[@class='from']/a[1])")  # 发微博的时间
+                date_time = div.xpath("string(.//div[@class='content']/p[@class='from']/a[1])")  # 发微博的时间
                 date_time = ''.join([t for t in date_time if t not in string.whitespace])  # 发微博的时间
                 if len(date_time) == 11:
                     date_time = str(datetime.datetime.now())[0:4] + '-' + date_time[0:2] + '-' + date_time[3:5] + ' ' + date_time[-5:]
                 else:
                     date_time = date_time[0:4] + '-' + date_time[5:7] + '-' + date_time[8:10] + ' ' + date_time[-5:]
                 web_item['时间'] = date_time
-                web_item['评论数'] = 0 \
-                    if table_item[n].xpath("string (.//div[@class='card-act']/ul/li[3])").replace('评论', '') == ' ' \
-                    else table_item[n].xpath("string(.//div[@class='card-act']/ul/li[3])").replace('评论 ', '')  # 评论数
-                web_item['转发数'] = 0 \
-                    if table_item[n].xpath("string(.//div[@class='card-act']/ul/li[2])").replace('转发', '') == '  ' \
-                    else table_item[n].xpath("string(.//div[@class='card-act']/ul/li[2])").replace('转发 ', '')  # 转发数
-                web_item['点赞数'] = 0 if table_item[n].xpath("string(.//div[@class='card-act']/ul/li[4])") == ' ' \
-                    else table_item[n].xpath("string(.//div[@class='card-act']/ul/li[4])").replace(' ', '')  # 点赞数
-                web_item['微博链接'] = 'https:' + table_item[n].xpath(".//div[@class='content']/p[@class='from']/a[1]/@href")[0]  # 微博地址
-
-                # 新增的
-                web_item['表情数'] = len(table_item[n].xpath(".//div[@class='content']/p//img[@class='face']"))  # 表情数
-                web_item['表情'] = '\n'.join(table_item[n].xpath(".//div[@class='content']/p//img[@class='face']/@title"))
-                img_num = len(
-                    table_item[n].xpath(".//div[@class='content']//img[@action-type='fl_pics']/@src"))  # 图片数，包括转发内容
+                pl = div.xpath("string (.//div[@class='card-act']/ul/li[3])")
+                web_item['评论数'] = re.findall('\d+', pl)[0] if re.findall('\d+', pl) else 0
+                zf = div.xpath("string(.//div[@class='card-act']/ul/li[2])")
+                web_item['转发数'] = re.findall('\d+', zf)[0] if re.findall('\d+', zf) else 0
+                dz = div.xpath("string(.//div[@class='card-act']/ul/li[4])")
+                web_item['点赞数'] = re.findall('\d+', dz)[0] if re.findall('\d+', dz) else 0
+                web_item['微博链接'] = 'https:' + div.xpath(".//div[@class='content']/p[@class='from']/a[1]/@href")[0]
+                web_item['表情数'] = len(div.xpath(".//div[@class='content']/p//img[@class='face']"))  # 表情数
+                web_item['表情'] = '\n'.join(div.xpath(".//div[@class='content']/p//img[@class='face']/@title"))
+                img_num = len(div.xpath(".//div[@class='content']//img[@action-type='fl_pics']/@src"))
                 web_item['图片数'] = img_num
-                web_item['图片链接'] = 'https:' + '\nhttps:'.join(table_item[n].xpath(".//div[@class='content']//img[@action-type='fl_pics']/@src")) if img_num else ''
+                web_item['图片链接'] = 'https:' + '\nhttps:'.join(div.xpath(".//div[@class='content']//img[@action-type='fl_pics']/@src")) if img_num else ''
 
-                zm = table_item[n].xpath(".//div[@class='content']//p//a/i")
+                zm = div.xpath(".//div[@class='content']//p//a/i")
                 video_url = ''
                 for z in zm:
                     if z.xpath("./text()")[0] == 'L':
@@ -114,21 +110,21 @@ class WbSpider:
                 web_item['@话题'] = '\n'.join(p.findall(content))
 
                 try:
-                    em = table_item[n].xpath(".//div[@class='content']/p[@node-type='feed_list_content']/a/i/text()")[0] \
-                        if table_item[n].xpath("string(.//div[@class='content']/p[@node-type='feed_list_content_full'])") == '' \
-                        else table_item[n].xpath(".//div[@class='content']/p[@node-type='feed_list_content_full']/a/i/text()")[0]
+                    em = div.xpath(".//div[@class='content']/p[@node-type='feed_list_content']/a/i/text()")[0] \
+                        if div.xpath("string(.//div[@class='content']/p[@node-type='feed_list_content_full'])") == '' \
+                        else div.xpath(".//div[@class='content']/p[@node-type='feed_list_content_full']/a/i/text()")[0]
                 except:
                     em = ''
 
                 if em == '2':
-                    location = table_item[n].xpath(".//div[@class='content']/p[@node-type='feed_list_content']/a/i/../text()")[0].replace('2', '')  \
-                        if table_item[n].xpath("string(.//div[@class='content']/p[@node-type='feed_list_content_full'])") == '' \
-                        else table_item[n].xpath(".//div[@class='content']/p[@node-type='feed_list_content_full']/a/i/../text()")[0].replace('2', '')
+                    location = div.xpath(".//div[@class='content']/p[@node-type='feed_list_content']/a/i/../text()")[0].replace('2', '')  \
+                        if div.xpath("string(.//div[@class='content']/p[@node-type='feed_list_content_full'])") == '' \
+                        else div.xpath(".//div[@class='content']/p[@node-type='feed_list_content_full']/a/i/../text()")[0].replace('2', '')
                 else:
                     location = ''
                 web_item['定位'] = location
                 web_data_list.append(web_item)
-            except IndexError:
+            except AssertionError:
                 break
         return web_data_list
 
@@ -248,7 +244,7 @@ if __name__ == '__main__':
 
     # custom:2020-01-09-0:2020-01-10-0 key_list = ['600028', '601668', '601398', '601318', '601939', '601288',
     # '600104', '601988', '601628', '601390', '旅游']
-    key_list = ['用户隐私']
+    key_list = ['旅行']
 
     # csv_name = '人民币消毒'
 
@@ -258,15 +254,15 @@ if __name__ == '__main__':
             wb = WbSpider(keyword=key, start_time=d + '-0', end_time=d + '-24', page=1)
             data = wb.start()
             save_to_csv(file_name=key+'.csv', list_dict=data)
-            print('################################################')
-            print(f"{key} {d}第{1}页数据存储成功。。。。。。")
-            print('################################################')
+            print('############################')
+            print(f"{key} {d}第{1}页数据存储成功")
+            print('############################')
 
             # 保存剩下页数数据
             for i in range(2, total_page + 1):
                 wb = WbSpider(keyword=key, start_time=d + '-0', end_time=d + '-24', page=i)
                 data = wb.start()
                 save_to_csv(file_name=key + '.csv', list_dict=data)
-                print('################################################')
-                print(f"{key} {d}第{i}页数据存储成功。。。。。。")
-                print('################################################')
+                print('############################')
+                print(f"{key} {d}第{i}页数据存储成功")
+                print('############################')

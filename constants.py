@@ -3,11 +3,9 @@ import time
 import requests
 from fake_useragent import UserAgent
 import os
-import re
 import sys
 import time
 import requests
-from parsel import Selector
 import pandas as pd
 
 ua = UserAgent(verify_ssl=False)
@@ -86,10 +84,6 @@ app_param = {
     'type': 'uid',
     'value': 1981449674,
 }
-"https://m.weibo.cn/api/container/getIndex?refer_flag[]=1001030103_&refer_flag[]=1001030103_&is_hot[]=1&is_hot[]=1&jumpfrom=weibocom&sudaref=s.weibo.com&type=uid&value=5586763840&containerid=2302835586763840"
-"https://m.weibo.cn/api/container/getIndex?refer_flag[]=1001030103_&refer_flag[]=1001030103_&is_hot[]=1&is_hot[]=1&jumpfrom=weibocom&sudaref=s.weibo.com&type=uid&value=5586763840&containerid=1005055586763840"
-
-"""https://weibo.com/u/6487028379?refer_flag=1001030103_"""
 
 # res = requests.get(url=app_url, headers=app_header_cookie, params=app_param).json()
 #

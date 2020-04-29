@@ -1,15 +1,9 @@
 import re
-import time
 import requests
 from lxml import html
-import os
 import datetime
 import string
-# from retrying import retry
 from constants import change_proxy, save_to_csv, web_header, app_header, app_header_cookie, web_url, app_url
-# import pysnooper
-import sys
-import csv
 
 etree = html.etree
 
@@ -24,6 +18,7 @@ class WbSpider:
         self.page = page
 
     def get_web_data(self, retry_count):
+        # 发起请求
         param = {
             'scope': 'ori',  # 是否原创
             'q': self.keyword,
@@ -47,7 +42,7 @@ class WbSpider:
             change_proxy(3)
             return self.get_web_data(retry_count - 1)
 
-        #######################################
+        # 提取数据
         if self.page == 1:
             global total_page
             total_page = len(root_web.xpath("//ul[@class='s-scroll']/li"))
@@ -75,7 +70,7 @@ class WbSpider:
             web_item['内容'] = ''.join([c for c in content if c not in string.whitespace])  # 微博内容
 
             forward_content = div.xpath("string(.//div[@class='content']/div[@class='card-comment'])")
-            web_item['转发内容'] = ''.join([c for c in forward_content if c not in string.whitespace])  # 转发内容
+            web_item['转发内容'] = ''.join([f for f in forward_content if f not in string.whitespace])  # 转发内容
 
             date_time = div.xpath("string(.//div[@class='content']/p[@class='from']/a[1])")  # 发微博的时间
             date_time = ''.join([t for t in date_time if t not in string.whitespace])  # 发微博的时间
@@ -91,7 +86,7 @@ class WbSpider:
             dz = div.xpath("string(.//div[@class='card-act']/ul/li[4])")
             web_item['点赞数'] = re.findall('\d+', dz)[0] if re.findall('\d+', dz) else 0
             web_item['微博链接'] = 'https:' + div.xpath(".//div[@class='content']/p[@class='from']/a[1]/@href")[0]
-            web_item['表情数'] = len(div.xpath(".//div[@class='content']/p//img[@class='face']"))  # 表情数
+            web_item['表情数'] = len(div.xpath(".//div[@class='content']/p//img[@class='face']"))
             web_item['表情'] = '\n'.join(div.xpath(".//div[@class='content']/p//img[@class='face']/@title"))
             img_num = len(div.xpath(".//div[@class='content']//img[@action-type='fl_pics']/@src"))
             web_item['图片数'] = img_num

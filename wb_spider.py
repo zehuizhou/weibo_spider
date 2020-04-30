@@ -188,7 +188,7 @@ class WbSpider:
             if 'msg' in app_json:
                 if app_json['msg'] == '这里还没有内容':
                     print('❤这里还没有内容，使用带cookie的header')
-                    app_json = requests.get(url=app_url, headers=app_header, params=app_param_cardsinfo, proxies=proxy, timeout=6).json()
+                    app_json = requests.get(url=app_url, headers=app_header_cookie, params=app_param_cardsinfo, proxies=proxy, timeout=6).json()
                     if 'msg' in app_json:
                         print('❤' + app_json['msg'])
                         return {'所在地': ''}

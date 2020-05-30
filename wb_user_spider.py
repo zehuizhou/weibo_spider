@@ -4,7 +4,6 @@
 #  @Author  : July
 import re
 import os
-import csv
 import time
 import requests
 from constants import app_header, app_url, save_to_csv, change_proxy
@@ -15,6 +14,7 @@ etree = html.etree
 
 proxy = {}
 
+# 第几页的标识，获取最新的就用None
 since_id = None
 
 
@@ -148,7 +148,7 @@ def spider(uid):
             item['是否转发'] = retweeted_status
             item['转发链接'] = retweeted_url
             item['转发内容'] = retweeted_content
-            item['since_id'] = '`' + str(since_id)
+            item['since_id'] = '`' + str(since_id)  # 防止Excel科学计数
 
             print(item)
             need_list.append(item)
@@ -159,6 +159,6 @@ def spider(uid):
 if __name__ == '__main__':
     change_proxy(1)
     while True:
-        data = spider(1265357020)
-        save_to_csv('素走世界.csv', data)
+        data = spider(2656274875)
+        save_to_csv('央视新闻.csv', data)
         print("########################存储成功########################")

@@ -47,7 +47,7 @@ def save_to_csv(file_name, list_dict):
 web_url = 'https://s.weibo.com/weibo'
 
 # cookie过期了就修改下
-web_cookie = 'SINAGLOBAL=9039371595693.941.1576205125652; _ga=GA1.2.1684815725.1577155440; wvr=6; UOR=,,www.baidu.com; Ugrow-G0=9ec894e3c5cc0435786b4ee8ec8a55cc; login_sid_t=430d775258d00b0bc7716ac7e386977c; cross_origin_proto=SSL; YF-V5-G0=125128c5d7f9f51f96971f11468b5a3f; _s_tentry=passport.weibo.com; Apache=8400782393616.642.1587956783860; ULV=1587956783866:37:10:2:8400782393616.642.1587956783860:1587869529519; SSOLoginState=1587956802; wb_view_log=1920*10801; WBStorage=42212210b087ca50|undefined; SCF=AqURd7rrLbKR6K42oMeW_I-_GcEWkVQLrLN_HSe9iIZff3q1Zn8wWnjKyNOygDvieykp0O2_KplRH28j_q9to1s.; SUB=_2A25zo4eYDeRhGeVI7lER9CvFyD6IHXVQ2P5QrDV8PUNbmtANLVb6kW9NTAX_rJQ-xvFmL68kTzrGt1qNEOP0fNfs; SUBP=0033WrSXqPxfM725Ws9jqgMF55529P9D9WWES-MGSxVJk.S7AzfIp_iT5JpX5KzhUgL.FoecSKe7Sh-4e0z2dJLoIEXLxKBLBonL1h5LxKqL1-BLB-qLxKqLBo5L1KBLxKnLBoBLBKnLxKqLBo5LBoBt; SUHB=0A05ytqQN9DXjq; ALF=1619602247; wb_view_log_3653045932=1920*10801; YF-Page-G0=8a1a69dc6ba21f1cd10b039dff0f4381|1588066251|1588066251; webim_unReadCount=%7B%22time%22%3A1588066252630%2C%22dm_pub_total%22%3A0%2C%22chat_group_client%22%3A0%2C%22chat_group_notice%22%3A0%2C%22allcountNum%22%3A0%2C%22msgbox%22%3A0%7D'
+web_cookie = 'SINAGLOBAL=9039371595693.941.1576205125652; _ga=GA1.2.1684815725.1577155440; UOR=,,www.baidu.com; login_sid_t=51ac8d93ad10fce8f709d86b79b04ef2; cross_origin_proto=SSL; _s_tentry=passport.weibo.com; Apache=1846717474350.4966.1589180204867; ULV=1589180204874:39:2:1:1846717474350.4966.1589180204867:1588815714915; SCF=AqURd7rrLbKR6K42oMeW_I-_GcEWkVQLrLN_HSe9iIZfyIDuna_pXDCOAR8tgv2SGzegfHq5wgcx9Tnxu8D3rwc.; SUB=_2A25zvIdsDeRhGeVI7lER9CvFyD6IHXVQy_-krDV8PUNbmtANLUamkW9NTAX_rKDexTkYTne33fyHL2vHm3VJ5Cly; SUBP=0033WrSXqPxfM725Ws9jqgMF55529P9D9WWES-MGSxVJk.S7AzfIp_iT5JpX5KzhUgL.FoecSKe7Sh-4e0z2dJLoIEXLxKBLBonL1h5LxKqL1-BLB-qLxKqLBo5L1KBLxKnLBoBLBKnLxKqLBo5LBoBt; SUHB=0gHSVPK1aJrSPD; ALF=1620716219; SSOLoginState=1589180220; wvr=6; webim_unReadCount=%7B%22time%22%3A1589180224589%2C%22dm_pub_total%22%3A0%2C%22chat_group_client%22%3A0%2C%22chat_group_notice%22%3A0%2C%22allcountNum%22%3A0%2C%22msgbox%22%3A0%7D; WBStorage=42212210b087ca50|undefined'
 
 web_header = {
     'Host': 's.weibo.com',
@@ -59,7 +59,7 @@ web_header = {
 # app
 app_url = 'https://m.weibo.cn/api/container/getIndex'
 
-app_cookie = '_ga=GA1.2.852180565.1582702609; ALF=1590658248; _T_WM=83354874305; XSRF-TOKEN=44bbaf; WEIBOCN_FROM=1110005030; SCF=AqURd7rrLbKR6K42oMeW_I-_GcEWkVQLrLN_HSe9iIZfZn6KksjBEOJHW7xmPqxJm-5LtCFODZwI7arSMO-Jmnk.; SUB=_2A25zo4heDeRhGeVI7lER9CvFyD6IHXVRbygWrDV6PUJbktAfLXf4kW1NTAX_rHooZMBAay4kBNpaLlitJ6SsvoWO; SUBP=0033WrSXqPxfM725Ws9jqgMF55529P9D9WWES-MGSxVJk.S7AzfIp_iT5JpX5K-hUgL.FoecSKe7Sh-4e0z2dJLoIEXLxKBLBonL1h5LxKqL1-BLB-qLxKqLBo5L1KBLxKnLBoBLBKnLxKqLBo5LBoBt; SUHB=09PNBu7yGjVwjx; SSOLoginState=1588066318; MLOGIN=1; M_WEIBOCN_PARAMS=fid%3D1005051644395354%26uicode%3D10000011'
+app_cookie = '_ga=GA1.2.852180565.1582702609; _T_WM=48146895564; XSRF-TOKEN=297c81; WEIBOCN_FROM=1110006030; ALF=1593404079; MLOGIN=1; SCF=AqURd7rrLbKR6K42oMeW_I-_GcEWkVQLrLN_HSe9iIZfojvE_qx_71115mTRZ853W6nd_3haKfnGw2aZahVwjgg.; SUB=_2A25z1a3hDeRhGeVI7lER9CvFyD6IHXVROTOprDV6PUJbktANLWXxkW1NTAX_rH9QFDwqXvBE22JkfPFHsCQoPvVv; SUBP=0033WrSXqPxfM725Ws9jqgMF55529P9D9WWES-MGSxVJk.S7AzfIp_iT5JpX5K-hUgL.FoecSKe7Sh-4e0z2dJLoIEXLxKBLBonL1h5LxKqL1-BLB-qLxKqLBo5L1KBLxKnLBoBLBKnLxKqLBo5LBoBt; SUHB=0xnyyaqQJufdul; SSOLoginState=1590812081; M_WEIBOCN_PARAMS=oid%3D4473768283954002%26luicode%3D20000061%26lfid%3D4473768283954002%26uicode%3D20000061%26fid%3D4473768283954002'
 
 app_header_cookie = {
     'x-xsrf-token': 'fd14bd',
@@ -80,11 +80,50 @@ app_header = {
     'X-Requested-With': 'XMLHttpRequest'
 }
 
-app_param = {
-    'type': 'uid',
-    'value': 1981449674,
-}
-
+# app_param = {
+#     'type': 'uid',
+#     'value': 1981449674,
+# }
+#
 # res = requests.get(url=app_url, headers=app_header_cookie, params=app_param).json()
 #
 # print(res)
+
+if __name__ == '__main__':
+    # import time
+    #
+    # def decorator(func):
+    #     def punch(*args, **kwargs):
+    #         print(time.strftime('%Y-%m-%d', time.localtime(time.time())))
+    #         func(*args, **kwargs)
+    #     return punch
+    #
+    # @decorator
+    # def say(name, department):
+    #     print('昵称：{0} 部门：{1}上班打卡成功'.format(name, department))
+    #
+    # @decorator
+    # def say_args(reason, **kwargs):
+    #     print(reason)
+    #     print(kwargs)
+    #
+    # say_args('张三', a='销售')
+
+    import time
+    from functools import wraps
+
+    def decorator(func):
+        @wraps(func)
+        def wait(*args, **kwargs):
+            time.sleep(2)
+            ret = func(*args, **kwargs)
+            return ret
+        return wait
+
+
+    @decorator
+    def cal_sum():
+        return 1
+
+    a = cal_sum()
+    print(a)

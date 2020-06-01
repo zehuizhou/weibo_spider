@@ -3,16 +3,14 @@ import random
 import time
 import requests
 from lxml import html
-from constants import save_to_csv, change_proxy, app_cookie
+from constants import save_to_csv, change_proxy, app_cookie, app_header_cookie
 from fake_useragent import UserAgent
 
 ua = UserAgent(verify_ssl=False)
 
-proxy = {}
-
 etree = html.etree
 
-cname = '快递回收再使用.csv'
+cname = '毛不易评论.csv'
 
 header = {
     'x-requested-with': 'XMLHttpRequest',
@@ -40,8 +38,10 @@ def spider(wb_id):
 
         def get_ret(count):
             try:
+                with open('pro.txt', 'r') as f:
+                    proxy = eval(f.read())
                 ret = requests.get(url=url, headers=header, proxies=proxy, timeout=6).json()
-                time.sleep(random.uniform(1.2, 3.5))
+                time.sleep(random.uniform(0.2, 1.5))
                 print(ret)
                 return ret
             except Exception as e:
@@ -72,6 +72,8 @@ def spider(wb_id):
                 h = d['text']
                 root = etree.HTML(h)
                 item['微博id'] = '`' + wb_id
+                item['bid'] = '`' + d['bid']
+                item['评论id'] = '`' + d['id']
                 item['评论内容'] = root.xpath("string(/)")
                 item['点赞'] = d['like_count']
                 created_at = d['created_at']  # 创建时间
@@ -109,24 +111,12 @@ def spider(wb_id):
 
 
 if __name__ == '__main__':
-    """
-    4466929533834665
-    4466986551438138
-    """
     change_proxy(1)
 
-    # with open('ids', 'r') as f:
-    #     content = f.read().splitlines()
-    #     wei_id_list = content
-    #
-    # for wei_id in wei_id_list:
-    #     spider(wei_id[-16:])
-    #     print(f'微博{wei_id}保存成功~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~')
-    # ids = ['4494413961089723', '4479501150583235', '4451582411926548', '4464432979561840', '4459232004455941',
-    #        '4445840611317716', '4413116584478881',
-    #        '4497984790650204', '4464418471145062', '4485024092612309', '4492993039680781']
-    # ids = ['4483890259176760', '4492653037136824', '4496423829587152', '4499856683132894', '4499412522715646',
-    #        '4498718973330682', '4498728041714220', '4498455361545491']
-    ids = ['4473768283954002']
+    with open('ids', 'r') as f:
+        content = f.read().splitlines()
+        ids = content
+
     for i in ids:
         spider(i)
+        print(f'{i} 保存成功'.center(70, '-'))

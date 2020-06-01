@@ -61,6 +61,8 @@ def spider(page, wb_id):
         if page == 1:
             global total_page
             total_page = max
+            if total_page > 50:
+                total_page = 50
             print(f"###########################总页数{total_page}###########################")
         data = ret['data']['data']
         if data is not None:

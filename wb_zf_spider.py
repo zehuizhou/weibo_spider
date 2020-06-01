@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
+import random
 import time
 import requests
 from lxml import html
-from constants import change_proxy, save_to_csv, app_cookie
+from constants import change_proxy, save_to_csv, app_cookie, app_header, app_header_cookie
 from fake_useragent import UserAgent
 
 ua = UserAgent(verify_ssl=False)
@@ -10,8 +11,6 @@ ua = UserAgent(verify_ssl=False)
 """
 爬不同的微博换个id就行，40行，cookie貌似不用换
 """
-proxy = {}
-
 etree = html.etree
 
 total_page = 1
@@ -23,7 +22,7 @@ header = {
     'x-xsrf-token': 'b7fa37',
     'sec-fetch-mode': 'cors',
     'sec-fetch-site': 'same-origin',
-    'cookie1': app_cookie,
+    'cookie': app_cookie,
     'Accept': 'application/json, text/plain, */*',
     'Referer': 'http://gl.sach.gov.cn/?from=singlemessage&isappinstalled=0',
     'User-Agent':  ua.random,
@@ -41,12 +40,15 @@ def spider(page, wb_id):
     need_list = []
 
     def get_ret(count):
+        if count < 0:
+            return
         # noinspection PyBroadException
         try:
-            ret = requests.get(url=url, params=param, headers=header, proxies=proxy, timeout=6).json()
+            with open('pro.txt', 'r') as f:
+                proxy = eval(f.read())
+            ret = requests.get(url=url, params=param, headers=app_header_cookie, proxies=proxy, timeout=6).json()
             return ret
         except Exception:
-            time.sleep(1)
             change_proxy(3)
             return get_ret(count - 1)
     ret = get_ret(3)
@@ -60,8 +62,9 @@ def spider(page, wb_id):
         print(f"总页数改为{total_page}")
 
     if ok == 1:
-        total_page = ret['data']['max']
-        print(f"###########################总页数{total_page}###########################")
+        if page in [1, 2]:
+            total_page = ret['data']['max']
+            print(f"###########################总页数{total_page}###########################")
 
         data = ret['data']['data']
         for d in data:
@@ -69,6 +72,8 @@ def spider(page, wb_id):
             html = d['text']
             root = etree.HTML(html)
             item['微博id'] = '`' + wb_id
+            item['bid'] = '`' + d['bid']
+            item['转发id'] = '`' + d['id']
             item['转发内容'] = root.xpath("string(/)")
             # if '//<a' in html:
             #     forward_user_name = d['user']['screen_name']  # 转发人昵称
@@ -100,13 +105,13 @@ def spider(page, wb_id):
 if __name__ == '__main__':
     change_proxy(1)
 
-    csv_name = '《双黄连对新型冠状病毒不具针对性》的转发.csv'
+    csv_name = '毛不易转发.csv'
 
-    with open('1.txt', 'r') as f:
+    with open('ids', 'r') as f:
         content = f.read().splitlines()
-        wei_id_list = content
+        ids = ['4509979665275482']
 
-    for wei_id in wei_id_list:
+    for wei_id in ids:
         data = spider(page=1, wb_id=wei_id)
         if data is not None:
             save_to_csv(csv_name, data)
@@ -116,4 +121,5 @@ if __name__ == '__main__':
             data = spider(page=i, wb_id=wei_id)
             if data is not None:
                 save_to_csv(csv_name, data)
-                print(f'总页数{total_page}，{wei_id}第{i}页保存成功~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+            print(f'总页数{total_page}，{wei_id}第{i}页保存成功~~~~~~~~~~~~~~~~~~~~~~~~~~~')
+        print(f'{wei_id} 保存成功'.center(70, '-'))

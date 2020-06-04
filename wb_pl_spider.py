@@ -10,7 +10,7 @@ ua = UserAgent(verify_ssl=False)
 
 etree = html.etree
 
-cname = '毛不易评论.csv'
+cname = '腾讯...评论.csv'
 
 header = {
     'x-requested-with': 'XMLHttpRequest',
@@ -41,7 +41,7 @@ def spider(wb_id):
                 with open('pro.txt', 'r') as f:
                     proxy = eval(f.read())
                 ret = requests.get(url=url, headers=header, proxies=proxy, timeout=6).json()
-                time.sleep(random.uniform(0.2, 1.5))
+                time.sleep(random.uniform(1.2, 5.5))
                 print(ret)
                 return ret
             except Exception as e:

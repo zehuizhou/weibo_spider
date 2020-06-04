@@ -10,7 +10,7 @@ import pandas as pd
 
 ua = UserAgent(verify_ssl=False)
 
-# 代理ip地址
+# 代理ip地址 http://www.xiongmaodaili.com?invitationCode=8E31F8BE-73FA-4078-B64A-CF32280F439E 按量提取 每次1个 json格式
 proxy_url = 'http://route.xiongmaodaili.com/xiongmao-web/api/glip?secret=8d7cc3c74eeb76ad422c67df45944d31&orderNo=GL20200131152126nmVxqyej&count=1&isTxt=0&proxyType=1'
 
 
@@ -37,7 +37,7 @@ def change_proxy(retry_count):
 
 # 保存数据
 def save_to_csv(file_name, list_dict):
-    path = os.path.join(os.path.dirname(sys.argv[0]), file_name)
+    path = os.path.join(os.path.dirname(sys.argv[0]), file_name + '.csv')
     flag = False if os.path.isfile(path) else True
     df = pd.DataFrame(list_dict)
     df.to_csv(path, mode='a', encoding='utf_8_sig', index=False, header=flag)
@@ -59,7 +59,7 @@ web_header = {
 # app
 app_url = 'https://m.weibo.cn/api/container/getIndex'
 
-app_cookie = '_ga=GA1.2.852180565.1582702609; _T_WM=48146895564; WEIBOCN_FROM=1110006030; ALF=1593587319; SUBP=0033WrSXqPxfM725Ws9jqgMF55529P9D9WWES-MGSxVJk.S7AzfIp_iT5JpX5K-hUgL.FoecSKe7Sh-4e0z2dJLoIEXLxKBLBonL1h5LxKqL1-BLB-qLxKqLBo5L1KBLxKnLBoBLBKnLxKqLBo5LBoBt; MLOGIN=1; SCF=AqURd7rrLbKR6K42oMeW_I-_GcEWkVQLrLN_HSe9iIZfDlfDQah2vZyoKwVakZVMFfHXxtVEFXukGsOtVjiribc.; SUB=_2A25z0NmRDeRhGeVI7lER9CvFyD6IHXVROufZrDV6PUJbktANLUXskW1NTAX_rIjk4M4e5o2gMmu-Mf_ivPMbaC5v; SUHB=0u5hcL0XHaELlJ; SSOLoginState=1590995393; XSRF-TOKEN=0ca232; M_WEIBOCN_PARAMS=luicode%3D10000011%26lfid%3D2302832172488380%26from%3Dfeed%26oid%3D4509979665275482%26fid%3D2304132172488380_-_WEIBO_SECOND_PROFILE_WEIBO%26uicode%3D10000011'
+app_cookie = '_ga=GA1.2.852180565.1582702609; _T_WM=48146895564; WEIBOCN_FROM=1110006030; MLOGIN=1; ALF=1593672169; XSRF-TOKEN=b1e1ca; SCF=AqURd7rrLbKR6K42oMeW_I-_GcEWkVQLrLN_HSe9iIZfewnmsE297zk_WCmr27OPmxeR4ewyHMwZCzFgpaVLCRc.; SUB=_2A25z0YjcDeRhGeVI7lER9CvFyD6IHXVRPSiUrDV6PUJbktANLW_ckW1NTAX_rHcbdaJ4skdVUqY6NQUfCReUfLgR; SUBP=0033WrSXqPxfM725Ws9jqgMF55529P9D9WWES-MGSxVJk.S7AzfIp_iT5JpX5K-hUgL.FoecSKe7Sh-4e0z2dJLoIEXLxKBLBonL1h5LxKqL1-BLB-qLxKqLBo5L1KBLxKnLBoBLBKnLxKqLBo5LBoBt; SUHB=0XDVgyTW9lPAHO; SSOLoginState=1591081100; M_WEIBOCN_PARAMS=oid%3D4511118766159322%26luicode%3D20000061%26lfid%3D4511118766159322%26uicode%3D20000061%26fid%3D4511118766159322'
 
 app_header_cookie = {
     # 'x-xsrf-token': 'fd14bd',

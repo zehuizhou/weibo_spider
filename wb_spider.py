@@ -1,4 +1,6 @@
 import re
+import sys
+
 import requests
 from lxml import html
 import datetime
@@ -29,7 +31,7 @@ class WbSpider:
             'page': self.page
         }
         if retry_count < 0:
-            return
+            sys.exit()
         try:
             with open('pro.txt', 'r') as f:
                 proxy = eval(f.read())
@@ -177,7 +179,7 @@ class WbSpider:
 
         if retry_count < 0:
             print('获取用户数据失败')
-            assert 0
+            sys.exit()
 
         try:
             with open('pro.txt', 'r') as f:

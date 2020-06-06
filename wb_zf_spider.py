@@ -105,7 +105,7 @@ def spider(page, wb_id):
 if __name__ == '__main__':
     change_proxy(1)
 
-    csv_name = '毛不易转发.csv'
+    csv_name = '毛不易转发'
 
     with open('ids', 'r') as f:
         content = f.read().splitlines()

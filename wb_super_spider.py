@@ -12,8 +12,6 @@ import random
 
 etree = html.etree
 
-proxy = {}
-
 # 第几页的标识，获取最新的就用None
 since_id = None
 
@@ -29,6 +27,8 @@ def spider():
         if c < 0:
             return
         try:
+            with open('pro.txt', 'r') as f:
+                proxy = eval(f.read())
             res = requests.get(url=url, headers=app_header, proxies=proxy, timeout=6).json()
             time.sleep(random.uniform(1, 3.5))
             print(res)

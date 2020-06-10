@@ -159,6 +159,6 @@ def spider(uid):
 if __name__ == '__main__':
     change_proxy(1)
     while True:
-        data = spider(2656274875)
-        save_to_csv('央视新闻.csv', data)
+        data = spider(5022145652)
+        save_to_csv('pxxh', data)
         print("########################存储成功########################")

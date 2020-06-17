@@ -1,6 +1,5 @@
 import re
 import sys
-
 import requests
 from lxml import html
 import datetime

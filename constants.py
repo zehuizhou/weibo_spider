@@ -7,12 +7,14 @@ import sys
 import time
 import requests
 import pandas as pd
+import ssl
+
+ssl._create_default_https_context = ssl._create_unverified_context
 
 ua = UserAgent(verify_ssl=False)
 
 # 代理ip地址 http://www.xiongmaodaili.com?invitationCode=8E31F8BE-73FA-4078-B64A-CF32280F439E 按量提取 每次1个 json格式
-proxy_url = 'http://route.xiongmaodaili.com/xiongmao-web/api/glip?secret=8d7cc3c74eeb76ad422c67df45944d31&orderNo=GL20200131152126nmVxqyej&count=1&isTxt=0&proxyType=1'
-
+proxy_url = 'http://route.xiongmaodaili.com/xiongmao-web/api/glip?secret=cf65354409478e7bd594f3bb98bb1805&orderNo=GL20200131152126nmVxqyej&count=1&isTxt=0&proxyType=1'
 
 def change_proxy(retry_count):
     if retry_count < 0:
@@ -59,7 +61,7 @@ web_header = {
 # app
 app_url = 'https://m.weibo.cn/api/container/getIndex'
 
-app_cookie = '_ga=GA1.2.852180565.1582702609; _T_WM=19463100327; ALF=1594170053; XSRF-TOKEN=c9cabf; WEIBOCN_FROM=1110005030; SCF=AqURd7rrLbKR6K42oMeW_I-_GcEWkVQLrLN_HSe9iIZfjXxee-aKXrMqXfNiZBTKgkP0BXPuadRvPBSk_bCyA8w.; SUB=_2A25z2f5SDeRhGeVI7lER9CvFyD6IHXVRJYIarDV6PUJbktAfLVrzkW1NTAX_rF3U2O3Vh0_CKRKMEScjJ2zH_8Xl; SUBP=0033WrSXqPxfM725Ws9jqgMF55529P9D9WWES-MGSxVJk.S7AzfIp_iT5JpX5K-hUgL.FoecSKe7Sh-4e0z2dJLoIEXLxKBLBonL1h5LxKqL1-BLB-qLxKqLBo5L1KBLxKnLBoBLBKnLxKqLBo5LBoBt; SUHB=0qjEDXKXq_l9ol; SSOLoginState=1591578114; MLOGIN=1; M_WEIBOCN_PARAMS=fid%3D1076032667565830%26uicode%3D10000011'
+app_cookie = '_ga=GA1.2.852180565.1582702609; SCF=AqURd7rrLbKR6K42oMeW_I-_GcEWkVQLrLN_HSe9iIZfYKNTUU4oscg5DwfNroNvvWp_ldLcrKjHzeaDFxG0WyM.; SUHB=0M21_tsFWEJs5E; _T_WM=61831882521; WEIBOCN_FROM=1110005030; MLOGIN=0; XSRF-TOKEN=30ea12; M_WEIBOCN_PARAMS=fid%3D1076035980037952%26uicode%3D10000011'
 
 app_header_cookie = {
     # 'x-xsrf-token': 'fd14bd',
@@ -90,40 +92,4 @@ app_header = {
 # print(res)
 
 if __name__ == '__main__':
-    # import time
-    #
-    # def decorator(func):
-    #     def punch(*args, **kwargs):
-    #         print(time.strftime('%Y-%m-%d', time.localtime(time.time())))
-    #         func(*args, **kwargs)
-    #     return punch
-    #
-    # @decorator
-    # def say(name, department):
-    #     print('昵称：{0} 部门：{1}上班打卡成功'.format(name, department))
-    #
-    # @decorator
-    # def say_args(reason, **kwargs):
-    #     print(reason)
-    #     print(kwargs)
-    #
-    # say_args('张三', a='销售')
-
-    import time
-    from functools import wraps
-
-    def decorator(func):
-        @wraps(func)
-        def wait(*args, **kwargs):
-            time.sleep(2)
-            ret = func(*args, **kwargs)
-            return ret
-        return wait
-
-
-    @decorator
-    def cal_sum():
-        return 1
-
-    a = cal_sum()
-    print(a)
+    pass

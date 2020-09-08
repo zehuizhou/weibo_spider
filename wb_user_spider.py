@@ -6,7 +6,7 @@ import re
 import os
 import time
 import requests
-from constants import app_header, app_url, save_to_csv, change_proxy
+from constants import app_header, app_url, save_to_csv, change_proxy, app_header_cookie
 from lxml import html
 import random
 
@@ -15,13 +15,12 @@ etree = html.etree
 proxy = {}
 
 # 第几页的标识，获取最新的就用None
-since_id = None
+since_id = 4003373806067384
 
 
 def spider(uid):
     global since_id
     app_param = {        # 'uid': 2803301701,
-
         'type': 'uid',
         'value': uid,
         'containerid': '107603'+str(uid),
@@ -33,7 +32,7 @@ def spider(uid):
         if c < 0:
             return
         try:
-            ret = requests.get(url=app_url, headers=app_header, params=app_param, proxies=proxy, timeout=6).json()
+            ret = requests.get(url=app_url, headers=app_header, params=app_param, proxies=proxy, timeout=6, verify=False).json()
             print(ret)
             a = ret['data']['cardlistInfo']['since_id']
             return ret
@@ -78,8 +77,10 @@ def spider(uid):
                     if c < 0:
                         return
                     try:
-                        detail_ret = requests.get(url=app_detail_url, headers=app_header, proxies=proxy, timeout=6).json()
+                        detail_ret = requests.get(url=app_detail_url, headers=app_header, proxies=proxy, timeout=6, verify=False).json()
+                        print(1)
                         print(detail_ret)
+                        print(2)
                         time.sleep(random.uniform(0.3, 1.2))
                         return detail_ret
                     except:
@@ -127,7 +128,7 @@ def spider(uid):
                     if c < 0:
                         return
                     try:
-                        re_detail_ret = requests.get(url=retweeted_url, headers=app_header, proxies=proxy, timeout=6).json()
+                        re_detail_ret = requests.get(url=retweeted_url, headers=app_header, proxies=proxy, timeout=6, verify=False).json()
                         print(f'########################re_detail_ret{re_detail_ret}')
                         time.sleep(random.uniform(0.3, 1.2))
                         return re_detail_ret
@@ -159,6 +160,6 @@ def spider(uid):
 if __name__ == '__main__':
     change_proxy(1)
     while True:
-        data = spider(5022145652)
-        save_to_csv('pxxh', data)
+        data = spider(5980037952)
+        save_to_csv('北京2022年冬奥会', data)
         print("########################存储成功########################")

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import random
+import sys
 import time
 import requests
 from lxml import html
@@ -37,6 +38,8 @@ def spider(wb_id):
             url = "https://m.weibo.cn/comments/hotflow?id={}&mid={}&max_id_type={}&max_id={}".format(str(wb_id), str(wb_id), str(max_id_type), str(max_id))
 
         def get_ret(count):
+            if count < 0:
+                sys.exit()
             try:
                 with open('pro.txt', 'r') as f:
                     proxy = eval(f.read())
